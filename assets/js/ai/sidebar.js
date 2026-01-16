@@ -560,7 +560,7 @@ function processSidebarAnswer(field, value, savedData) {
     }
     
     // Salva filtros como metadata sempre que houver mudanças
-    if (filtersChanged) {
+    if (filtersChanged || field === 'free_filter') {
         const currentLead = getOrCreateLeadData();
         const currentFilters = {
             tipo: filters.tipo || currentLead.searchFilters?.tipo || null,
@@ -571,11 +571,11 @@ function processSidebarAnswer(field, value, savedData) {
             features: filters.features || currentLead.searchFilters?.features || null
         };
         leadUpdates.searchFilters = currentFilters;
-        leadUpdates.filterHistory = leadUpdates.filterHistory || currentLead.filterHistory || [];
-        leadUpdates.filterHistory.push({
+        const existingHistory = currentLead.filterHistory || [];
+        leadUpdates.filterHistory = [...existingHistory, {
             timestamp: new Date().toISOString(),
             filters: { ...currentFilters }
-        });
+        }];
     }
     
     // Salva informações no leadData (mantém contexto)
