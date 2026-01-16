@@ -14,6 +14,7 @@
 O workflow já está criado em `.github/workflows/deploy.yml` e está correto!
 
 Ele irá:
+
 - ✅ Executar automaticamente a cada push na branch `main`
 - ✅ Fazer deploy de todos os arquivos estáticos
 - ✅ Publicar no GitHub Pages
@@ -23,12 +24,14 @@ Ele irá:
 Após configurar o Source como "GitHub Actions", você pode:
 
 ### Opção A: Fazer um novo push (recomendado)
+
 ```bash
 git commit --allow-empty -m "trigger: deploy to GitHub Pages"
 git push origin main
 ```
 
 ### Opção B: Acionar manualmente
+
 1. Vá para a aba **Actions** no GitHub
 2. Clique em **"Deploy to GitHub Pages"**
 3. Clique em **"Run workflow"**
@@ -45,6 +48,7 @@ git push origin main
 ## ✅ Passo 5: Acessar o Site
 
 Após o deploy bem-sucedido:
+
 - O site estará disponível em: `https://iborba.github.io/aimob/`
 - Ou: `https://[seu-usuario].github.io/[nome-do-repo]/`
 
@@ -53,12 +57,14 @@ Após o deploy bem-sucedido:
 ### Se o workflow falhar:
 
 1. **Verifique as permissões:**
+
    - Vá em **Settings** → **Actions** → **General**
    - Em **"Workflow permissions"**, selecione **"Read and write permissions"**
    - Marque **"Allow GitHub Actions to create and approve pull requests"**
    - Clique em **Save**
 
 2. **Verifique se o Source está correto:**
+
    - Deve estar como **"GitHub Actions"**, não "Deploy from a branch"
 
 3. **Verifique os logs:**
@@ -81,4 +87,3 @@ Após o deploy bem-sucedido:
 5. Acessar `https://iborba.github.io/aimob/`
 
 Pronto! 🚀
-
