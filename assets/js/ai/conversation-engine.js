@@ -348,63 +348,49 @@ function decideNextQuestion(context) {
     const hasEnoughInfo = (context.hasPropertyType || context.hasBudget || context.hasLocation || 
                           context.hasBedrooms || context.hasMotivation);
     
-    // NEW: Check if we should show confirmation summary first
-    const shouldShowConfirmation = hasEnoughInfo && 
-                                   conversationMemory.messages.filter(m => m.role === 'user').length === 1 &&
-                                   typeof window.generateStructuredSummary === 'function';
-    
-    if (shouldShowConfirmation) {
-        // Show structured summary and ask for confirmation
-        const summary = window.generateStructuredSummary(conversationMemory.extractedData);
-        
-        return {
-            id: 'confirmation_summary',
-            message: summary,
-            field: 'confirmation',
-            type: 'confirmation',
-            optional: false,
-            requiresConfirmation: true
-        };
-    }
-    
     if (hasEnoughInfo) {
         // Proceed directly to closing - NO contact info questions here
         // Contact will be asked in sidebar after results are shown
+        // FIXED: Only show ONE closing message, not multiple
+        
+        // Check if we already showed a closing message
+        const hasClosingMessage = conversationMemory.messages.some(m => 
+            m.role === 'assistant' && 
+            (m.text.includes('consigo te mostrar') || m.text.includes('RESUMO DA SUA BUSCA'))
+        );
+        
+        if (hasClosingMessage) {
+            // Already showed closing, don't show again
+            return null; // Return null to prevent duplicate
+        }
+        
         let closingMessage = "";
         
-        // NEW: Use structured summary if available and not already shown
-        if (typeof window.generateStructuredSummary === 'function' && 
-            !conversationMemory.confirmationShown) {
-            closingMessage = window.generateStructuredSummary(conversationMemory.extractedData);
-            closingMessage += "\n\nPerfeito! Vou buscar os melhores imóveis pra você! 🔍";
-            conversationMemory.confirmationShown = true;
-        } else {
-            // Fallback to simple message
-            const details = [];
-            if (context.hasPropertyType) {
-                details.push(`um ${leadData.propertyType}`);
-            }
-            if (context.hasBedrooms) {
-                details.push(`${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`);
-            }
-            if (context.hasBudget) {
-                const budget = leadData.budget?.max || leadData.budget?.min;
-                if (budget) {
-                    details.push(`até ${formatCurrency(budget)}`);
-                }
-            }
-            if (context.hasLocation) {
-                details.push(`na região de ${leadData.location}`);
-            }
-            
-            if (details.length > 0) {
-                closingMessage = `Perfeito! Entendi que você busca ${details.join(', ')}. `;
-            } else {
-                closingMessage = "Perfeito! ";
-            }
-            
-            closingMessage += "Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊";
+        // Simple, single closing message
+        const details = [];
+        if (context.hasPropertyType) {
+            details.push(`um ${leadData.propertyType}`);
         }
+        if (context.hasBedrooms) {
+            details.push(`${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`);
+        }
+        if (context.hasBudget) {
+            const budget = leadData.budget?.max || leadData.budget?.min;
+            if (budget) {
+                details.push(`até ${formatCurrency(budget)}`);
+            }
+        }
+        if (context.hasLocation) {
+            details.push(`na região de ${leadData.location}`);
+        }
+        
+        if (details.length > 0) {
+            closingMessage = `Perfeito! Entendi que você busca ${details.join(', ')}. `;
+        } else {
+            closingMessage = "Perfeito! ";
+        }
+        
+        closingMessage += "Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊";
         
         // Save lead with current filters as metadata before redirecting
         const filters = buildSearchFilters();
@@ -414,17 +400,6 @@ function decideNextQuestion(context) {
         return {
             type: 'close',
             message: closingMessage,
-            redirectToResults: true
-        };
-    }
-    
-    // Fallback: if we have some info but not enough for closing, ask for more context
-    // But if we have enough basic info, offer to refine instead
-    if (hasEnoughInfo) {
-        // We have enough info but decideNextQuestion didn't close - offer refinement
-        return {
-            type: 'close',
-            message: "Perfeito! Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊\n\nSe quiser refinar a pesquisa depois, é só pedir pra mim! Estou sempre aqui pra ajudar! ✨",
             redirectToResults: true
         };
     }
@@ -525,10 +500,18 @@ function processAIResponse(response) {
     
     // Save AI acknowledgment to memory
     if (response.acknowledgment) {
-        // Check if we already have this message
-        const alreadyExists = conversationMemory.messages.some(m => 
-            m.role === 'assistant' && m.text === response.acknowledgment
-        );
+        // IMPROVED: Check if we already have this message (exact or similar)
+        const acknowledgmentTrimmed = response.acknowledgment.trim();
+        const alreadyExists = conversationMemory.messages.some(m => {
+            if (m.role !== 'assistant') return false;
+            const msgText = m.text.trim();
+            // Exact match
+            if (msgText === acknowledgmentTrimmed) return true;
+            // Similar match (same intent)
+            if (msgText.includes('entendi') && acknowledgmentTrimmed.includes('entendi')) return true;
+            if (msgText.includes('perfeito') && acknowledgmentTrimmed.includes('perfeito')) return true;
+            return false;
+        });
         
         if (!alreadyExists) {
             conversationMemory.messages.push({
@@ -542,6 +525,8 @@ function processAIResponse(response) {
             if (typeof addAIMessage === 'function') {
                 addAIMessage(response.acknowledgment);
             }
+        } else {
+            console.log('Acknowledgment already shown, skipping:', acknowledgmentTrimmed.substring(0, 50));
         }
     }
     
@@ -573,10 +558,19 @@ function processAIResponse(response) {
                 // If should redirect to results, do it
                 if (response.nextQuestion.redirectToResults) {
                     setTimeout(() => {
-                        // Add message about refinement
+                        // Add message about refinement - check if already shown
                         const refinementMsg = "Se quiser refinar a pesquisa depois, é só pedir pra mim! Estou sempre aqui pra ajudar! ✨";
-                        if (typeof addAIMessage === 'function') {
+                        const refinementAlreadyShown = conversationMemory.messages.some(m => 
+                            m.role === 'assistant' && m.text.includes('refinar a pesquisa')
+                        );
+                        
+                        if (!refinementAlreadyShown && typeof addAIMessage === 'function') {
                             addAIMessage(refinementMsg);
+                            conversationMemory.messages.push({
+                                role: 'assistant',
+                                text: refinementMsg,
+                                timestamp: new Date()
+                            });
                         }
                         
                         setTimeout(() => {
@@ -585,12 +579,20 @@ function processAIResponse(response) {
                             // Use relative path (works with both file:// and http://)
                             const searchUrl = `pages/imoveis.html?${new URLSearchParams(filters).toString()}`;
                             
-                            // Show button to go to results
-                            if (typeof showResultsButton === 'function') {
-                                showResultsButton(searchUrl);
+                            // Check if button already exists
+                            const messagesContainer = document.getElementById('chat-messages');
+                            const existingButton = messagesContainer?.querySelector('a[href*="imoveis.html"]');
+                            
+                            if (!existingButton) {
+                                // Show button to go to results
+                                if (typeof showResultsButton === 'function') {
+                                    showResultsButton(searchUrl);
+                                } else {
+                                    // Fallback: redirect directly
+                                    window.location.href = searchUrl;
+                                }
                             } else {
-                                // Fallback: redirect directly
-                                window.location.href = searchUrl;
+                                console.log('Results button already exists, skipping');
                             }
                         }, 1500);
                     }, 2000);
@@ -926,6 +928,13 @@ function buildSearchFilters() {
 function showResultsButton(searchUrl) {
     const messagesContainer = document.getElementById('chat-messages');
     if (!messagesContainer) return;
+    
+    // FIXED: Check if button already exists
+    const existingButton = messagesContainer.querySelector('a[href*="imoveis.html"]');
+    if (existingButton) {
+        console.log('Results button already exists, skipping duplicate');
+        return;
+    }
     
     const buttonDiv = document.createElement('div');
     buttonDiv.className = 'ai-message';

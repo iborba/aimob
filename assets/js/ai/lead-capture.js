@@ -585,11 +585,19 @@ function resetChat() {
 let chatStarted = false; // Prevent multiple starts
 
 function startChat(initialMessage = null) {
-    // Prevent multiple starts
+    // IMPROVED: Prevent multiple starts with better check
     if (chatStarted) {
-        console.log('Chat already started, ignoring...');
+        console.log('Chat already started, ignoring duplicate startChat call...');
         return;
     }
+    
+    // Also check if messages already exist
+    const messagesContainer = document.getElementById('chat-messages');
+    if (messagesContainer && messagesContainer.children.length > 0) {
+        console.log('Chat messages already exist, resetting first...');
+        resetChat();
+    }
+    
     chatStarted = true;
     
     const messagesContainer = document.getElementById('chat-messages');
