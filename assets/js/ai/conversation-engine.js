@@ -209,9 +209,33 @@ function generateAcknowledgment(userMessage, extractedData) {
         parts.push(`para investimento`);
     }
     
-    // Build acknowledgment using their words - more friendly
-    if (parts.length > 0) {
-        acknowledgment = "Ah, entendi! Então você busca " + parts.join(', ') + ". ";
+    // IMPROVED: More natural acknowledgment - don't list all extracted data
+    // This avoids exposing the extraction process
+    
+    // Count how many data points were extracted
+    const dataPointsCount = Object.keys(extractedData).filter(key => {
+        const value = extractedData[key];
+        if (typeof value === 'object' && value !== null) {
+            return Object.keys(value).length > 0;
+        }
+        return value !== null && value !== undefined && value !== '';
+    }).length;
+    
+    // If many data points extracted, use generic acknowledgment (more natural)
+    if (dataPointsCount >= 3) {
+        acknowledgment = "Perfeito! Já entendi o que você precisa. Deixa eu ver as melhores opções...";
+    } else if (dataPointsCount >= 2) {
+        // Medium amount - slightly more specific but still natural
+        if (extractedData.propertyType) {
+            acknowledgment = `Legal! ${extractedData.propertyType} é uma ótima escolha. `;
+        } else if (extractedData.location) {
+            acknowledgment = `Perfeito! ${extractedData.location} é uma região excelente. `;
+        } else {
+            acknowledgment = "Entendi! ";
+        }
+    } else if (parts.length > 0) {
+        // Few data points - can be slightly more specific
+        acknowledgment = "Ah, entendi! " + parts[0] + ". ";
     } else {
         // If we can't extract much, use a more general but still acknowledging response
         if (userMessage.length > 30) {
@@ -221,8 +245,8 @@ function generateAcknowledgment(userMessage, extractedData) {
         }
     }
     
-    // Add a friendly transition
-    if (!acknowledgment.endsWith('... ')) {
+    // Add a friendly transition (only if not already complete)
+    if (!acknowledgment.includes('...') && !acknowledgment.endsWith('.')) {
         acknowledgment += "Legal! ";
     }
     

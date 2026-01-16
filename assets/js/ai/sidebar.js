@@ -797,7 +797,8 @@ function processFreeTextFilter(text, savedData, state) {
             }
         }, 300);
         
-        addLunaSidebarMessage("Entendi! Vou atualizar os filtros com essas informações. Os resultados já estão sendo atualizados! ✨");
+        // IMPROVED: More natural, less technical
+        addLunaSidebarMessage("Perfeito! Vou ajustar os resultados. ");
     } else {
         addLunaSidebarMessage("Entendi! Se quiser refinar algum filtro específico, pode me dizer! Por exemplo: 'mais barato', 'mais quartos', 'outra cidade'... 😊");
     }
