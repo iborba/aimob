@@ -236,9 +236,30 @@ function initLunaSidebar() {
 }
 
 function askRefinementQuestion(type, state, savedData) {
-    if (state.questionsAsked.has(type)) return;
+    // FIXED: For mandatory fields (name, contact), check if actually collected
+    // Don't skip if already asked but not properly collected
+    if (state.questionsAsked.has(type)) {
+        // For mandatory fields, check if they're actually collected
+        if (type === 'name') {
+            const currentLead = getOrCreateLeadData();
+            if (currentLead.name && currentLead.name !== 'Não informado' && currentLead.name.trim() !== '') {
+                return; // Name is properly collected, skip
+            }
+            // Name not properly collected, allow re-asking
+        } else if (type === 'contact') {
+            const currentLead = getOrCreateLeadData();
+            if (currentLead.phone || currentLead.email) {
+                return; // Contact is properly collected, skip
+            }
+            // Contact not properly collected, allow re-asking
+        } else {
+            return; // Non-mandatory field already asked, skip
+        }
+    }
     
-    state.questionsAsked.add(type);
+    if (!state.questionsAsked.has(type)) {
+        state.questionsAsked.add(type);
+    }
     
     let question = null;
     
