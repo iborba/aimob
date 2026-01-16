@@ -887,19 +887,30 @@ function processNaturalLanguage(text, field) {
     }
     
     // Name extraction - simple, just take the text if it's a name field
-    if (field === 'name' || !leadData.name) {
+    if (field === 'name' || (!leadData.name && field !== 'phone' && field !== 'email')) {
         // Remove common prefixes and clean up
         let nameText = text.trim();
         // Remove "meu nome é", "eu sou", etc
         nameText = nameText.replace(/^(meu nome é|eu sou|eu sou o|eu sou a|me chamo|sou o|sou a|chamo)\s+/i, '');
-        // Take first word or first two words as name
-        const nameParts = nameText.split(/\s+/);
-        if (nameParts.length > 0 && nameParts[0].length > 1) {
-            // Take first name (or first two if they're short)
-            if (nameParts.length > 1 && nameParts[0].length <= 3 && nameParts[1].length > 2) {
-                extracted.name = nameParts[0] + ' ' + nameParts[1];
+        
+        // If field is explicitly 'name', take the whole text (or first reasonable part)
+        if (field === 'name') {
+            // Take first 2-3 words max (reasonable name length)
+            const nameParts = nameText.split(/\s+/).slice(0, 3);
+            if (nameParts.length > 0 && nameParts[0].length > 0) {
+                extracted.name = nameParts.join(' ').trim();
             } else {
-                extracted.name = nameParts[0];
+                // Fallback: just use the text as-is (up to 50 chars)
+                extracted.name = nameText.substring(0, 50).trim();
+            }
+        } else if (!leadData.name) {
+            // Try to infer name from text if it looks like a name
+            const nameParts = nameText.split(/\s+/);
+            if (nameParts.length > 0 && nameParts[0].length > 1 && nameParts[0].length < 20) {
+                // Looks like a name (single word, reasonable length)
+                if (nameParts.length === 1 || (nameParts.length === 2 && nameParts[1].length < 20)) {
+                    extracted.name = nameParts.slice(0, 2).join(' ').trim();
+                }
             }
         }
     }
