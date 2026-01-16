@@ -171,14 +171,28 @@ function initLunaSidebar() {
         currentQuestion: null
     };
     
-    // Load saved preferences from URL or localStorage
+    // Load saved preferences from URL, localStorage, OR global leadData
+    // PRIORIDADE: leadData (conversa inicial) > URL params > localStorage
     const urlParams = new URLSearchParams(window.location.search);
+    const currentLead = getOrCreateLeadData(); // Get from conversation or storage
+    
     const savedData = {
-        propertyType: urlParams.get('tipo') || '',
-        bedrooms: urlParams.get('quartos') ? parseInt(urlParams.get('quartos')) : null,
-        budgetMax: urlParams.get('preco_max') ? parseInt(urlParams.get('preco_max')) : null,
-        location: urlParams.get('localizacao') || ''
+        propertyType: currentLead.propertyType || urlParams.get('tipo') || '',
+        bedrooms: currentLead.bedrooms || (urlParams.get('quartos') ? parseInt(urlParams.get('quartos')) : null),
+        budgetMax: currentLead.budget?.max || (urlParams.get('preco_max') ? parseInt(urlParams.get('preco_max')) : null),
+        location: currentLead.location || urlParams.get('localizacao') || ''
     };
+    
+    // CRITICAL: Mark questions as already asked if data exists
+    if (savedData.bedrooms) {
+        sidebarState.questionsAsked.add('bedrooms_refine');
+    }
+    if (savedData.location) {
+        sidebarState.questionsAsked.add('location');
+    }
+    if (savedData.propertyType) {
+        sidebarState.questionsAsked.add('property_type');
+    }
     
     // Start conversation - mais amigável
     setTimeout(() => {
@@ -586,9 +600,11 @@ function processSidebarAnswer(field, value, savedData) {
     // Acknowledge answer using user's words
     let acknowledgment = "";
     if (field === 'location') {
-        acknowledgment = `Perfeito! Vou focar em ${filters.localizacao || value}. Os resultados já estão sendo atualizados! ✨`;
+        // IMPROVED: More natural, less technical
+        acknowledgment = `Perfeito! Vou focar em ${filters.localizacao || value}. `;
     } else if (field === 'bedrooms') {
-        acknowledgment = `Entendi! ${filters.quartos} quarto${filters.quartos > 1 ? 's' : ''}. Vou filtrar as opções!`;
+        // IMPROVED: More natural, less technical
+        acknowledgment = "Perfeito! Vou ajustar os resultados. ";
     } else if (field === 'timeline') {
         if (lowerValue.includes('urgente') || lowerValue.includes('logo') || lowerValue.includes('já') || lowerValue.includes('rápido') || lowerValue.includes('imediato')) {
             acknowledgment = "Entendi, então você precisa de algo rápido. Vou priorizar opções que possam ser fechadas rapidamente!";
@@ -609,7 +625,8 @@ function processSidebarAnswer(field, value, savedData) {
             acknowledgment = "Entendi sobre o pagamento! ";
         }
     } else if (field === 'features') {
-        acknowledgment = "Perfeito! Vou filtrar os imóveis com essas características. Os resultados já estão sendo atualizados! ✨";
+        // IMPROVED: More natural, less technical
+        acknowledgment = "Perfeito! Vou ajustar os resultados com essas características. ";
     } else if (field === 'decision_makers') {
         if (lowerValue.includes('sozinho') || lowerValue.includes('só eu')) {
             acknowledgment = "Entendi, a decisão é só sua. Isso facilita o processo!";

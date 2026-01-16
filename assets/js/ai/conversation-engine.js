@@ -232,6 +232,26 @@ function generateAcknowledgment(userMessage, extractedData) {
 // ========================================
 // DECIDE NEXT QUESTION - Intelligent & Contextual
 // ========================================
+// ========================================
+// CHECK IF TOPIC WAS MENTIONED IN HISTORY
+// ========================================
+function wasMentionedInHistory(topic, conversationMemory) {
+    const allText = conversationMemory.messages
+        .filter(m => m.role === 'user')
+        .map(m => m.text.toLowerCase())
+        .join(' ');
+    
+    const patterns = {
+        location: /porto\s*alegre|canoas|viamão|gravataí|cachoeirinha|são\s*leopoldo|novo\s*hamburgo|região|metropolitana|cidade|moro|mora|onde\s*mora/i,
+        bedrooms: /(\d+)\s*(?:quarto|dormitório)|um|dois|três|quatro|cinco\s*quarto|sozinho|casal|família/i,
+        budget: /mil|milhão|reais|r\$/i,
+        propertyType: /apartamento|apto|ap\b|casa|sobrado|studio|loft|cobertura/i,
+        name: /meu\s*nome|eu\s*sou|chamo|sou\s*o|sou\s*a|me\s*chamo/i
+    };
+    
+    return patterns[topic]?.test(allText) || false;
+}
+
 function decideNextQuestion(context) {
     // Build question based on what's missing, avoiding repetition
     
@@ -239,21 +259,21 @@ function decideNextQuestion(context) {
     const justMentioned = context.topicsInLastMessage;
     const allMessages = conversationMemory.messages.filter(m => m.role === 'user').map(m => m.text.toLowerCase()).join(' ');
     
-    // Priority order: what's most critical and what makes sense in context
+    // IMPROVED: Check full history, not just last message
+    const wasMentionedInFullHistory = {
+        location: wasMentionedInHistory('location', conversationMemory),
+        bedrooms: wasMentionedInHistory('bedrooms', conversationMemory),
+        budget: wasMentionedInHistory('budget', conversationMemory),
+        propertyType: wasMentionedInHistory('propertyType', conversationMemory),
+        name: wasMentionedInHistory('name', conversationMemory)
+    };
     
-    // 0. NOME - Perguntar no início para personalizar
-    if (!context.hasName && !justMentioned.has('name') && !allMessages.match(/meu nome|eu sou|eu sou o|eu sou a|chamo|sou o|sou a|me chamo/i)) {
-        return {
-            id: 'name_first',
-            message: "Pra começar, me diz seu nome? 😊",
-            field: 'name',
-            type: 'text',
-            optional: false
-        };
-    }
+    // Priority order: what's most critical and what makes sense in context
+    // NOTE: Nome removido do início - será perguntado opcionalmente após resultados
     
     // 1. LOCALIZAÇÃO - CIDADE (CRÍTICO! Perguntar antes de tudo)
-    if (!context.hasLocation && !justMentioned.has('location') && !allMessages.match(/porto alegre|canoas|viamão|gravataí|cachoeirinha|são leopoldo|novo hamburgo|cidade|moro|mora|onde mora/i)) {
+    // IMPROVED: Check both context.hasLocation AND full history
+    if (!context.hasLocation && !justMentioned.has('location') && !wasMentionedInFullHistory.location) {
         let question = "";
         if (leadData.name) {
             question = `Oi ${leadData.name}! E me conta... em qual cidade você mora ou tá pensando em encontrar? `;
@@ -274,7 +294,8 @@ function decideNextQuestion(context) {
     }
     
     // 2. Budget - Ask gently when needed, more conversational
-    if (!context.hasBudget && !justMentioned.has('budget') && !allMessages.match(/mil|milhão|reais|r\$/)) {
+    // IMPROVED: Check both context.hasBudget AND full history
+    if (!context.hasBudget && !justMentioned.has('budget') && !wasMentionedInFullHistory.budget) {
         // Build contextual question - more flexible and friendly
         let question = "";
         if (context.hasPropertyType) {
