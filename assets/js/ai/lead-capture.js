@@ -438,11 +438,34 @@ function initAIChat() {
     const sendChatBtn = document.getElementById('send-chat');
     const floatBtn = document.getElementById('ai-float-btn');
     
-    if (!chatModal) return;
+    if (!chatModal) {
+        console.error('AI Chat Modal not found!');
+        return;
+    }
     
-    // Open chat from hero button
+    // Open chat from hero button - with multiple fallbacks
     if (startLunaBtn) {
-        startLunaBtn.addEventListener('click', () => openLunaChat());
+        // Remove any existing listeners
+        const newBtn = startLunaBtn.cloneNode(true);
+        startLunaBtn.parentNode.replaceChild(newBtn, startLunaBtn);
+        
+        // Add click listener
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            if (typeof openLunaChat === 'function') {
+                openLunaChat();
+            } else if (typeof window.openLunaChat === 'function') {
+                window.openLunaChat();
+            } else {
+                // Fallback: open modal directly
+                const modal = document.getElementById('ai-chat-modal');
+                if (modal) {
+                    modal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+        });
     }
     
     // Open chat from original button (if exists)
@@ -609,12 +632,21 @@ function startChat(initialMessage = null) {
 // ========================================
 function openLunaChat(initialMessage = null) {
     const chatModal = document.getElementById('ai-chat-modal');
-    if (!chatModal) return;
+    if (!chatModal) {
+        console.error('AI Chat Modal not found!');
+        return;
+    }
     
     chatModal.classList.add('active');
     document.body.style.overflow = 'hidden';
-    resetChat();
-    startChat(initialMessage);
+    
+    // Reset and start chat
+    if (typeof resetChat === 'function') {
+        resetChat();
+    }
+    if (typeof startChat === 'function') {
+        startChat(initialMessage);
+    }
 }
 
 // Make it globally available

@@ -61,7 +61,7 @@
             
             <!-- CTA to Start Conversation -->
             <div style="text-align: center; margin-top: 48px;">
-                <button id="start-luna-chat" class="btn btn-primary btn-lg" style="padding: 20px 48px; font-size: 1.1rem; background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);">
+                <button id="start-luna-chat" class="btn btn-primary btn-lg" style="padding: 20px 48px; font-size: 1.1rem; background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);" onclick="if(typeof openLunaChat === 'function') { openLunaChat(); } else { console.error('openLunaChat not available'); }">
                     <i class="fas fa-comments"></i>
                     Conversar com a Luna
                 </button>
