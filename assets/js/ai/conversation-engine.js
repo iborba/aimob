@@ -428,7 +428,16 @@ function handleConversation(userMessage) {
     // Check if there's a current question field from the input
     const input = document.getElementById('chat-input');
     const currentField = input?.dataset?.stepField || 'motivation.story';
-    const extracted = processNaturalLanguage(userMessage, currentField);
+    
+    // NEW: Use enhanced criteria extractor if available
+    let extracted = {};
+    if (typeof window.extractAllCriteria === 'function') {
+        extracted = window.extractAllCriteria(userMessage, currentField);
+    } else {
+        // Fallback to original extractor
+        extracted = processNaturalLanguage(userMessage, currentField);
+    }
+    
     if (Object.keys(extracted).length > 0) {
         mergeData(leadData, extracted);
         conversationMemory.extractedData = { ...conversationMemory.extractedData, ...extracted };

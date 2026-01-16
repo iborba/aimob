@@ -623,19 +623,18 @@ function startChat(initialMessage = null) {
     // Reset chat state
     chatState.currentStep = -1; // Reset to prevent old flow
     
-    // Show opening - more friendly and less direct
+    // Show opening - NEW: More friendly and inviting as per instructions
     setTimeout(() => {
-        addAIMessage("Oi! 👋 Que bom você ter chegado até aqui!");
+        addAIMessage("Oi! 👋 Que bom você ter chegado até aqui! Eu sou a Luna! Estou aqui pra te ajudar a encontrar o imóvel dos seus sonhos.");
     }, 300);
     
     setTimeout(() => {
-        addAIMessage("Eu sou a Luna! Estou aqui pra te ajudar a encontrar o lugar perfeito pra você. 😊");
-    }, 1000);
+        addAIMessage("Me conta: o que você tá procurando? Pode falar de forma bem natural, como se estivesse conversando com uma amiga. Tipo: número de quartos, localização, orçamento, amenities que são importantes pra você... Tudo que vier à mente! 😊");
+    }, 1500);
     
     setTimeout(() => {
         // If there's an initial message, use it directly
         if (initialMessage) {
-            addAIMessage("Me conta: o que você tá procurando? Pode falar do jeito que quiser, sem pressa!");
             setTimeout(() => {
                 addUserMessage(initialMessage);
                 if (typeof window.conversationEngine !== 'undefined' && window.conversationEngine.handleConversation) {
