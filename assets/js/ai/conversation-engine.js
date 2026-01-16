@@ -311,12 +311,16 @@ function decideNextQuestion(context) {
         };
     }
     
-    // 2. Budget - Ask gently when needed, more conversational
+    // 2. Budget - CRITICAL: Always ask if not mentioned
     // IMPROVED: Check both context.hasBudget AND full history
+    // FIXED: Budget should be asked BEFORE closing, even if optional
     if (!context.hasBudget && !justMentioned.has('budget') && !wasMentionedInFullHistory.budget) {
         // Build contextual question - more flexible and friendly
         let question = "";
-        if (context.hasPropertyType) {
+        if (context.hasPropertyType && context.hasLocation) {
+            // We have type and location, ask about budget before closing
+            question = `Ah, legal! E quando você pensa nesse ${leadData.propertyType} em ${leadData.location}, você já tem uma ideia de quanto conseguiria investir? `;
+        } else if (context.hasPropertyType) {
             question = `Ah, legal! E quando você pensa nesse ${leadData.propertyType}, você já tem uma ideia de quanto conseguiria investir? `;
         } else {
             question = "E me conta... você já pensou em quanto conseguiria investir nisso? ";
@@ -328,7 +332,7 @@ function decideNextQuestion(context) {
             message: question,
             field: 'budget.range',
             type: 'text',
-            optional: true
+            optional: true // Optional but should be asked
         };
     }
     
