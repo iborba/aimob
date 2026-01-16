@@ -652,30 +652,8 @@ function startChat(initialMessage = null) {
     }, 1800);
 }
 
-// ========================================
-// OPEN LUNA CHAT (Global function)
-// ========================================
-function openLunaChat(initialMessage = null) {
-    const chatModal = document.getElementById('ai-chat-modal');
-    if (!chatModal) {
-        console.error('AI Chat Modal not found!');
-        return;
-    }
-    
-    chatModal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-    
-    // Reset and start chat
-    if (typeof resetChat === 'function') {
-        resetChat();
-    }
-    if (typeof startChat === 'function') {
-        startChat(initialMessage);
-    }
-}
-
-// Make it globally available IMMEDIATELY
-window.openLunaChat = openLunaChat;
+// openLunaChat is now defined at the top of the file (IIFE)
+// This ensures it's available immediately, even before DOMContentLoaded
 
 // ========================================
 // PROCESS NEXT STEP (Legacy - disabled when using conversation engine)
