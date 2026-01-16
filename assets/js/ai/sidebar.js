@@ -295,9 +295,21 @@ function handleSidebarInput(state, savedData) {
     
     // Process answer
     const question = state.currentQuestion;
+    
+    // Se não há pergunta ativa, trata como novo filtro livre
+    if (!question) {
+        // Usuário está refinando busca livremente
+        processFreeTextFilter(text, savedData, state);
+        input.value = '';
+        return;
+    }
+    
     if (question) {
         // Save answer (could update filters)
         const filtersChanged = processSidebarAnswer(question.field, text, savedData);
+        
+        // Clear current question to allow free input after answering
+        state.currentQuestion = null;
         
         // Ask next question in sequence - PRIORIDADE: IMÓVEL primeiro, CLIENTE depois
         setTimeout(() => {
@@ -321,16 +333,26 @@ function handleSidebarInput(state, savedData) {
             } else if (!state.questionsAsked.has('current_situation')) {
                 askRefinementQuestion('current_situation', state, savedData);
             } else if (!state.questionsAsked.has('contact')) {
-                // Por último, pedir contato (telefone ou email)
-                askRefinementQuestion('contact', state, savedData);
+                // Por último, pedir contato (telefone ou email) - mas só se ainda não tiver
+                const currentLead = getOrCreateLeadData();
+                if (!currentLead.phone && !currentLead.email) {
+                    askRefinementQuestion('contact', state, savedData);
+                } else {
+                    // Já tem contato, oferecer novos filtros
+                    addLunaSidebarMessage("Perfeito! Com essas informações, consigo te ajudar ainda melhor. Os resultados já estão filtrados pra você! 😊");
+                    addLunaSidebarMessage("Se quiser refinar mais alguma coisa ou mudar algum filtro, é só me falar! Estou sempre aqui pra ajudar! ✨");
+                }
             } else {
+                // Todas as perguntas foram feitas, mas sidebar permanece aberta para novos filtros
                 addLunaSidebarMessage("Perfeito! Com essas informações, consigo te ajudar ainda melhor. Os resultados já estão filtrados pra você! 😊");
-                addLunaSidebarMessage("Se quiser refinar mais alguma coisa, é só me falar! Estou sempre aqui pra ajudar! ✨");
+                addLunaSidebarMessage("Se quiser refinar mais alguma coisa ou mudar algum filtro, é só me falar! Estou sempre aqui pra ajudar! ✨");
             }
         }, 1000);
     }
     
     input.value = '';
+    
+    // Sidebar permanece aberta - permite novos filtros a qualquer momento
 }
 
 function processSidebarAnswer(field, value, savedData) {
@@ -683,5 +705,84 @@ function showSidebarTextInput(question) {
     const input = document.getElementById('luna-sidebar-input');
     input.placeholder = question.placeholder || "Digite sua resposta...";
     input.focus();
+}
+
+// ========================================
+// PROCESS FREE TEXT FILTER (novos filtros livres)
+// ========================================
+function processFreeTextFilter(text, savedData, state) {
+    const lowerText = text.toLowerCase();
+    
+    // Tenta identificar o que o usuário quer filtrar
+    let filtersChanged = false;
+    const filters = {
+        tipo: savedData.propertyType || '',
+        quartos: savedData.bedrooms || null,
+        preco_max: savedData.budgetMax || null,
+        localizacao: savedData.location || ''
+    };
+    
+    // Detecta tipo de imóvel
+    if (lowerText.match(/apartamento|apto|ap/i)) {
+        filters.tipo = 'apartamento';
+        filtersChanged = true;
+    } else if (lowerText.match(/casa|sobrado/i)) {
+        filters.tipo = 'casa';
+        filtersChanged = true;
+    }
+    
+    // Detecta quartos
+    const bedroomMatch = text.match(/(\d+)\s*(?:quarto|dormitório)/i);
+    if (bedroomMatch) {
+        filters.quartos = parseInt(bedroomMatch[1]);
+        filtersChanged = true;
+    }
+    
+    // Detecta preço
+    const priceMatch = text.match(/(?:até|até\s*|uns?\s*)?(?:r\$\s*)?(\d+(?:[.,]\d+)?)\s*(milhões?|mil|m)?/i);
+    if (priceMatch) {
+        let value = parseFloat(priceMatch[1].replace(',', '.'));
+        if (priceMatch[2] && priceMatch[2].includes('milhão')) {
+            value *= 1000000;
+        } else if (priceMatch[2] && priceMatch[2].includes('mil')) {
+            value *= 1000;
+        }
+        filters.preco_max = value;
+        filtersChanged = true;
+    }
+    
+    // Detecta localização
+    const cities = ['porto alegre', 'canoas', 'viamão', 'gravataí', 'cachoeirinha', 'são leopoldo', 'novo hamburgo'];
+    for (const city of cities) {
+        if (lowerText.includes(city)) {
+            filters.localizacao = city.charAt(0).toUpperCase() + city.slice(1);
+            filtersChanged = true;
+            break;
+        }
+    }
+    
+    if (filtersChanged) {
+        // Processa como se fosse uma resposta de filtro
+        processSidebarAnswer('free_filter', text, savedData);
+        
+        // Atualiza URL e resultados
+        const newParams = new URLSearchParams(window.location.search);
+        Object.keys(filters).forEach(key => {
+            if (filters[key] !== null && filters[key] !== '' && filters[key] !== undefined) {
+                newParams.set(key, filters[key]);
+            }
+        });
+        window.history.replaceState({}, '', `?${newParams.toString()}`);
+        
+        setTimeout(() => {
+            if (typeof window.initFilters === 'function') {
+                window.initFilters();
+            }
+        }, 300);
+        
+        addLunaSidebarMessage("Entendi! Vou atualizar os filtros com essas informações. Os resultados já estão sendo atualizados! ✨");
+    } else {
+        addLunaSidebarMessage("Entendi! Se quiser refinar algum filtro específico, pode me dizer! Por exemplo: 'mais barato', 'mais quartos', 'outra cidade'... 😊");
+    }
 }
 
