@@ -661,7 +661,7 @@ function createPropertyCardForResults(imovel) {
             <button class="property-favorite" aria-label="Favoritar">
                 <i class="far fa-heart"></i>
             </button>
-            <div class="property-price">${formatCurrency(imovel.preco)}</div>
+            <div class="property-price">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(imovel.preco)}</div>
         </div>
         <div class="property-content">
             <div class="property-location">
