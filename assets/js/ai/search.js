@@ -219,38 +219,42 @@ const keywordMapping = {
 
 // ========================================
 // AI SEARCH INITIALIZATION
+// Now everything goes through Luna
 // ========================================
 function initAISearch() {
     const searchInput = document.getElementById('ai-search-input');
     const searchBtn = document.getElementById('ai-search-btn');
     const suggestionChips = document.querySelectorAll('.suggestion-chip');
+    const chatModal = document.getElementById('ai-chat-modal');
     
-    if (!searchInput || !searchBtn) return;
+    if (searchInput && searchBtn) {
+        // Search button opens Luna
+        searchBtn.addEventListener('click', () => {
+            const query = searchInput.value.trim();
+            if (typeof window.openLunaChat === 'function') {
+                window.openLunaChat(query || null);
+            }
+        });
+        
+        // Enter key opens Luna
+        searchInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (typeof window.openLunaChat === 'function') {
+                    window.openLunaChat(query || null);
+                }
+            }
+        });
+    }
     
-    // Auto-resize textarea
-    searchInput.addEventListener('input', function() {
-        this.style.height = 'auto';
-        this.style.height = Math.min(this.scrollHeight, 120) + 'px';
-    });
-    
-    // Search button click
-    searchBtn.addEventListener('click', () => performAISearch(searchInput.value));
-    
-    // Enter key (but allow Shift+Enter for new lines)
-    searchInput.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            performAISearch(searchInput.value);
-        }
-    });
-    
-    // Suggestion chips
+    // Suggestion chips open Luna with that text
     suggestionChips.forEach(chip => {
         chip.addEventListener('click', () => {
-            searchInput.value = chip.dataset.text;
-            searchInput.style.height = 'auto';
-            searchInput.style.height = Math.min(searchInput.scrollHeight, 120) + 'px';
-            performAISearch(chip.dataset.text);
+            const text = chip.dataset.text;
+            if (typeof window.openLunaChat === 'function') {
+                window.openLunaChat(text);
+            }
         });
     });
 }

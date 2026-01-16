@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel de Leads | Lar Prime Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <style>
+        .admin-container {
+            min-height: 100vh;
+            background: var(--color-bg-dark);
+            padding: 80px 0 40px;
+        }
+        
+        .admin-header {
+            background: var(--color-bg-card);
+            padding: 24px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 32px;
+        }
+        
+        .admin-header h1 {
+            font-size: 1.75rem;
+            margin-bottom: 8px;
+        }
+        
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: var(--color-bg-card);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .stat-card h3 {
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .stat-card .value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+        
+        .leads-table-container {
+            background: var(--color-bg-card);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .leads-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .leads-table th {
+            padding: 16px;
+            text-align: left;
+            background: var(--color-bg-medium);
+            font-weight: 600;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--color-text-muted);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .leads-table td {
+            padding: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: var(--color-text-secondary);
+        }
+        
+        .leads-table tr:hover {
+            background: rgba(255,255,255,0.02);
+        }
+        
+        .quality-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .quality-high {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .quality-medium {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        .quality-low {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .lead-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .btn-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .btn-whatsapp {
+            background: rgba(37, 211, 102, 0.2);
+            color: #25d366;
+        }
+        
+        .btn-phone {
+            background: rgba(201, 169, 98, 0.2);
+            color: var(--color-primary);
+        }
+        
+        .btn-view {
+            background: rgba(59, 130, 246, 0.2);
+            color: #3b82f6;
+        }
+        
+        .lead-detail-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .lead-detail-modal.active {
+            display: flex;
+        }
+        
+        .lead-detail-content {
+            background: var(--color-bg-card);
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 32px;
+        }
+        
+        .lead-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .lead-detail-section {
+            margin-bottom: 24px;
+        }
+        
+        .lead-detail-section h3 {
+            font-size: 1rem;
+            color: var(--color-primary);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .lead-detail-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        
+        .detail-item {
+            padding: 12px;
+            background: var(--color-bg-medium);
+            border-radius: 8px;
+        }
+        
+        .detail-item label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        .detail-item .value {
+            color: var(--color-text-primary);
+            font-weight: 500;
+        }
+        
+        .motivation-story {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 3px solid #8b5cf6;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 12px;
+            font-style: italic;
+            color: var(--color-text-secondary);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="../index.html" class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
+                <span class="ai-badge">Admin</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Site</a></li>
+                <li><a href="admin-leads.html" class="active">Leads</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <div class="container">
+            <div class="admin-header">
+                <h1>Painel de Leads Qualificados</h1>
+                <p style="color: var(--color-text-muted);">Leads coletados através do chatbot IA</p>
+            </div>
+
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h3>Total de Leads</h3>
+                    <div class="value" id="total-leads">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Leads Hoje</h3>
+                    <div class="value" id="today-leads">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Score Médio</h3>
+                    <div class="value" id="avg-score">0</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Taxa Conversão</h3>
+                    <div class="value" id="conversion-rate">0%</div>
+                </div>
+            </div>
+
+            <div class="leads-table-container">
+                <table class="leads-table">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Contato</th>
+                            <th>Orçamento</th>
+                            <th>Timeline</th>
+                            <th>Motivação</th>
+                            <th>Score</th>
+                            <th>Data</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="leads-tbody">
+                        <!-- Leads will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lead Detail Modal -->
+    <div class="lead-detail-modal" id="lead-detail-modal">
+        <div class="lead-detail-content">
+            <div class="lead-detail-header">
+                <h2 id="lead-detail-name">Detalhes do Lead</h2>
+                <button class="btn-icon" onclick="closeLeadDetail()" style="background: rgba(239,68,68,0.2); color: #ef4444;">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div id="lead-detail-body">
+                <!-- Lead details will be inserted here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample leads data (in production, this would come from an API)
+        let leads = JSON.parse(localStorage.getItem('larprime_leads') || '[]');
+        
+        // Initialize
+        updateStats();
+        renderLeads();
+        
+        function updateStats() {
+            const total = leads.length;
+            const today = leads.filter(l => {
+                const leadDate = new Date(l.startedAt);
+                const today = new Date();
+                return leadDate.toDateString() === today.toDateString();
+            }).length;
+            const avgScore = leads.length > 0 
+                ? Math.round(leads.reduce((sum, l) => sum + (l.qualityScore || 0), 0) / leads.length)
+                : 0;
+            
+            document.getElementById('total-leads').textContent = total;
+            document.getElementById('today-leads').textContent = today;
+            document.getElementById('avg-score').textContent = avgScore;
+        }
+        
+        function renderLeads() {
+            const tbody = document.getElementById('leads-tbody');
+            
+            if (leads.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                            <i class="fas fa-inbox" style="font-size: 3rem; margin-bottom: 16px; display: block; opacity: 0.3;"></i>
+                            Nenhum lead coletado ainda. Os leads aparecerão aqui quando os usuários completarem o chatbot.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            tbody.innerHTML = leads.map((lead, index) => {
+                const date = new Date(lead.startedAt);
+                const qualityClass = lead.qualityScore >= 70 ? 'quality-high' : 
+                                    lead.qualityScore >= 40 ? 'quality-medium' : 'quality-low';
+                
+                return `
+                    <tr>
+                        <td><strong>${lead.name || 'Não informado'}</strong></td>
+                        <td>
+                            ${lead.phone ? `<a href="tel:${lead.phone}">${lead.phone}</a>` : '-'}<br>
+                            ${lead.email || ''}
+                        </td>
+                        <td>${formatBudget(lead.budget)}</td>
+                        <td>${lead.timeline?.when || '-'}</td>
+                        <td>${lead.motivation?.primary || '-'}</td>
+                        <td><span class="quality-badge ${qualityClass}">${lead.qualityScore || 0}/100</span></td>
+                        <td>${date.toLocaleDateString('pt-BR')}</td>
+                        <td>
+                            <div class="lead-actions">
+                                <button class="btn-icon btn-view" onclick="viewLead(${index})" title="Ver detalhes">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                ${lead.phone ? `
+                                    <a href="https://wa.me/${lead.phone.replace(/\D/g, '')}" target="_blank" class="btn-icon btn-whatsapp" title="WhatsApp">
+                                        <i class="fab fa-whatsapp"></i>
+                                    </a>
+                                    <a href="tel:${lead.phone}" class="btn-icon btn-phone" title="Ligar">
+                                        <i class="fas fa-phone"></i>
+                                    </a>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+        
+        function formatBudget(budget) {
+            if (!budget) return '-';
+            if (budget.exact) {
+                return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(budget.exact);
+            }
+            if (budget.min && budget.max) {
+                return `R$ ${(budget.min / 1000).toFixed(0)}k - R$ ${(budget.max / 1000).toFixed(0)}k`;
+            }
+            if (budget.max) {
+                return `Até R$ ${(budget.max / 1000).toFixed(0)}k`;
+            }
+            return '-';
+        }
+        
+        function viewLead(index) {
+            const lead = leads[index];
+            const modal = document.getElementById('lead-detail-modal');
+            const body = document.getElementById('lead-detail-body');
+            
+            document.getElementById('lead-detail-name').textContent = lead.name || 'Lead Anônimo';
+            
+            body.innerHTML = `
+                <div class="lead-detail-section">
+                    <h3>Informações de Contato</h3>
+                    <div class="lead-detail-grid">
+                        <div class="detail-item">
+                            <label>Nome</label>
+                            <div class="value">${lead.name || 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Telefone</label>
+                            <div class="value">${lead.phone || 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>E-mail</label>
+                            <div class="value">${lead.email || 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Preferência de Contato</label>
+                            <div class="value">${lead.contactPreference?.method || 'Não informado'}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lead-detail-section">
+                    <h3>Informações Financeiras</h3>
+                    <div class="lead-detail-grid">
+                        <div class="detail-item">
+                            <label>Orçamento</label>
+                            <div class="value">${formatBudget(lead.budget)}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Condição de Compra</label>
+                            <div class="value">${lead.purchaseCondition?.method || 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Entrada Disponível</label>
+                            <div class="value">${lead.purchaseCondition?.downPayment ? 
+                                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(lead.purchaseCondition.downPayment) 
+                                : 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Pré-aprovado</label>
+                            <div class="value">${lead.purchaseCondition?.preApproved ? 'Sim' : 'Não'}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lead-detail-section">
+                    <h3>Timeline & Urgência</h3>
+                    <div class="lead-detail-grid">
+                        <div class="detail-item">
+                            <label>Quando</label>
+                            <div class="value">${lead.timeline?.when || 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Urgência</label>
+                            <div class="value">${lead.timeline?.urgency || 'Não informado'}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lead-detail-section">
+                    <h3>Motivação & Contexto</h3>
+                    <div class="lead-detail-grid">
+                        <div class="detail-item">
+                            <label>Motivação Principal</label>
+                            <div class="value">${lead.motivation?.primary || 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Situação Atual</label>
+                            <div class="value">${lead.currentSituation?.living || 'Não informado'}</div>
+                        </div>
+                    </div>
+                    ${lead.motivation?.story ? `
+                        <div class="motivation-story">
+                            <strong>História do Lead:</strong><br>
+                            "${lead.motivation.story}"
+                        </div>
+                    ` : ''}
+                </div>
+                
+                <div class="lead-detail-section">
+                    <h3>Preferências do Imóvel</h3>
+                    <div class="lead-detail-grid">
+                        <div class="detail-item">
+                            <label>Tipo</label>
+                            <div class="value">${lead.propertyType || 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Quartos</label>
+                            <div class="value">${lead.bedrooms || 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Localização</label>
+                            <div class="value">${lead.location || 'Não informado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Features Essenciais</label>
+                            <div class="value">${lead.mustHaveFeatures?.join(', ') || 'Nenhuma'}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="lead-detail-section">
+                    <h3>Metadados</h3>
+                    <div class="lead-detail-grid">
+                        <div class="detail-item">
+                            <label>Score de Qualidade</label>
+                            <div class="value">${lead.qualityScore || 0}/100</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Perguntas Respondidas</label>
+                            <div class="value">${lead.questionsAnswered || 0}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Duração do Chat</label>
+                            <div class="value">${lead.chatDuration || 0}s</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Data de Coleta</label>
+                            <div class="value">${new Date(lead.startedAt).toLocaleString('pt-BR')}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+        
+        function closeLeadDetail() {
+            document.getElementById('lead-detail-modal').classList.remove('active');
+        }
+        
+        // Listen for new leads (from chatbot)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'larprime_leads') {
+                leads = JSON.parse(e.newValue || '[]');
+                updateStats();
+                renderLeads();
+            }
+        });
+        
+        // Also check periodically
+        setInterval(() => {
+            const stored = JSON.parse(localStorage.getItem('larprime_leads') || '[]');
+            if (stored.length !== leads.length) {
+                leads = stored;
+                updateStats();
+                renderLeads();
+            }
+        }, 2000);
+    </script>
+</body>
+</html>
+

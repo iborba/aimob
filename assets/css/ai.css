@@ -652,13 +652,13 @@
 }
 
 /* ========================================
-   AI FLOAT BUTTON
+   AI FLOAT BUTTON - Always Available
    ======================================== */
 .ai-float-btn {
-    position: fixed;
+    position: fixed !important;
     bottom: var(--space-xl);
     right: calc(var(--space-xl) + 160px);
-    display: flex;
+    display: flex !important;
     align-items: center;
     gap: var(--space-sm);
     padding: var(--space-md) var(--space-lg);
@@ -671,6 +671,18 @@
     z-index: 998;
     cursor: pointer;
     transition: all var(--transition-base);
+    animation: lunaPulse 3s ease-in-out infinite;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+@keyframes lunaPulse {
+    0%, 100% { 
+        box-shadow: 0 4px 20px rgba(139, 92, 246, 0.4);
+    }
+    50% { 
+        box-shadow: 0 6px 30px rgba(139, 92, 246, 0.6);
+    }
 }
 
 .ai-float-btn i {
@@ -679,7 +691,8 @@
 
 .ai-float-btn:hover {
     transform: scale(1.05);
-    box-shadow: 0 6px 30px rgba(139, 92, 246, 0.5);
+    box-shadow: 0 8px 40px rgba(139, 92, 246, 0.6);
+    animation: none;
 }
 
 /* ========================================
@@ -721,13 +734,19 @@
         grid-template-columns: 1fr;
     }
     
+    .ai-float-btn {
+        padding: var(--space-md);
+        right: var(--space-md);
+        bottom: calc(var(--space-xl) + 70px);
+    }
+    
     .ai-float-btn span {
         display: none;
     }
     
-    .ai-float-btn {
-        padding: var(--space-md);
-        right: calc(var(--space-xl) + 70px);
+    .whatsapp-float {
+        bottom: var(--space-md);
+        right: var(--space-md);
     }
 }
 

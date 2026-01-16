@@ -192,20 +192,25 @@ function initMobileMenu() {
 
     // Create mobile menu container
     const mobileMenu = document.createElement('div');
+    // Detect base path (root or pages/)
+    const isInPages = window.location.pathname.includes('/pages/');
+    const basePath = isInPages ? '../' : '';
+    const pagesPath = isInPages ? '' : 'pages/';
+    
     mobileMenu.className = 'mobile-menu';
     mobileMenu.innerHTML = `
         <div class="mobile-menu-content">
             <ul class="mobile-nav-links">
-                <li><a href="index.html">Início</a></li>
-                <li><a href="imoveis.html">Imóveis</a></li>
-                <li><a href="sobre.html">Sobre Nós</a></li>
-                <li><a href="contato.html">Contato</a></li>
+                <li><a href="${basePath}index.html">Início</a></li>
+                <li><a href="${basePath}${pagesPath}imoveis.html">Imóveis</a></li>
+                <li><a href="${basePath}${pagesPath}sobre.html">Sobre Nós</a></li>
+                <li><a href="${basePath}${pagesPath}contato.html">Contato</a></li>
             </ul>
             <div class="mobile-nav-actions">
                 <a href="tel:+5511999999999" class="mobile-phone">
                     <i class="fas fa-phone"></i> (11) 99999-9999
                 </a>
-                <a href="contato.html" class="btn btn-primary">Fale Conosco</a>
+                <a href="${basePath}${pagesPath}contato.html" class="btn btn-primary">Fale Conosco</a>
             </div>
         </div>
     `;

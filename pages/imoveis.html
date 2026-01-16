@@ -8,18 +8,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/sidebar.css">
 </head>
 <body>
     <!-- Navbar -->
     <nav class="navbar">
         <div class="container navbar-content">
-            <a href="index.html" class="logo">
+            <a href="../index.html" class="logo">
                 <span class="logo-icon">◆</span>
                 <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
             </a>
             <ul class="nav-links">
-                <li><a href="index.html">Início</a></li>
+                <li><a href="../index.html">Início</a></li>
                 <li><a href="imoveis.html" class="active">Imóveis</a></li>
                 <li><a href="sobre.html">Sobre Nós</a></li>
                 <li><a href="contato.html">Contato</a></li>
@@ -43,15 +44,15 @@
     <header class="page-header">
         <div class="container">
             <h1>Encontre seu <span class="text-gradient">Imóvel Ideal</span></h1>
-            <p>Explore nossa seleção de imóveis exclusivos em São Paulo e região</p>
+            <p>Explore nossa seleção de imóveis na Região Metropolitana de Porto Alegre/RS</p>
         </div>
     </header>
 
     <!-- Properties Listing -->
     <section class="section">
         <div class="container">
-            <!-- Filters -->
-            <div class="filters-bar">
+            <!-- Filters - Hidden, Luna sidebar replaces this -->
+            <div class="filters-bar" style="display: none;">
                 <div class="filter-group">
                     <label>Tipo:</label>
                     <select>
@@ -597,7 +598,10 @@
         <span>Fale Conosco</span>
     </a>
 
-    <script src="script.js"></script>
+    <script src="../assets/js/core/main.js"></script>
+    <script src="../assets/js/imoveis/database.js"></script>
+    <script src="../assets/js/imoveis/filter.js"></script>
+    <script src="../assets/js/ai/sidebar.js"></script>
 </body>
 </html>
 

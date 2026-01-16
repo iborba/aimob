@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="ai-styles.css">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/ai.css">
 </head>
 <body>
     <!-- Navbar -->
@@ -22,9 +22,9 @@
             </a>
             <ul class="nav-links">
                 <li><a href="index.html" class="active">Início</a></li>
-                <li><a href="imoveis.html">Imóveis</a></li>
-                <li><a href="sobre.html">Sobre Nós</a></li>
-                <li><a href="contato.html">Contato</a></li>
+                <li><a href="pages/imoveis.html">Imóveis</a></li>
+                <li><a href="pages/sobre.html">Sobre Nós</a></li>
+                <li><a href="pages/contato.html">Contato</a></li>
             </ul>
             <div class="nav-actions">
                 <a href="tel:+5511999999999" class="nav-phone">
@@ -48,58 +48,26 @@
         <div class="container hero-content">
             <div class="hero-badge">
                 <i class="fas fa-robot"></i>
-                <span>Busca inteligente com IA • A forma mais fácil de encontrar seu lar</span>
+                <span>Converse com a Luna • Sua assistente imobiliária pessoal</span>
             </div>
             <h1 class="hero-title">
-                Conte pra gente:<br>
-                <span class="text-gradient">Como é seu lar ideal?</span>
+                Encontre seu <span class="text-gradient">Lar Perfeito</span><br>
+                conversando com a <span class="text-gradient">Luna</span>
             </h1>
             <p class="hero-subtitle">
-                Esqueça formulários complicados. Apenas descreva o que você procura, 
-                como se estivesse conversando com um amigo.
+                A Luna é sua assistente imobiliária. Converse com ela naturalmente, como se fosse uma amiga, 
+                e ela vai entender exatamente o que você precisa e te ajudar a encontrar.
             </p>
             
-            <!-- AI Natural Language Search -->
-            <div class="ai-search-box">
-                <div class="ai-search-icon">
-                    <i class="fas fa-sparkles"></i>
-                </div>
-                <div class="ai-search-input-wrapper">
-                    <textarea 
-                        id="ai-search-input" 
-                        class="ai-search-input" 
-                        placeholder="Ex: Quero um apartamento de 3 quartos perto do metrô, até 600 mil, com vaga de garagem e aceite pet..."
-                        rows="1"
-                    ></textarea>
-                    <div class="ai-search-suggestions">
-                        <span class="suggestion-label">Experimente:</span>
-                        <button class="suggestion-chip" data-text="Apartamento para casal jovem, primeiro imóvel, até 400 mil">
-                            🏠 Primeiro imóvel
-                        </button>
-                        <button class="suggestion-chip" data-text="Casa grande com quintal para família com 3 filhos e cachorro">
-                            👨‍👩‍👧‍👦 Família grande
-                        </button>
-                        <button class="suggestion-chip" data-text="Studio ou loft moderno perto de transporte público para investimento">
-                            💼 Investimento
-                        </button>
-                        <button class="suggestion-chip" data-text="Cobertura de luxo com vista, área gourmet e piscina privativa">
-                            ✨ Alto padrão
-                        </button>
-                    </div>
-                </div>
-                <button id="ai-search-btn" class="ai-search-btn">
-                    <i class="fas fa-wand-magic-sparkles"></i>
-                    <span>Buscar com IA</span>
-                </button>
-            </div>
-
-            <!-- Alternative: Start AI Conversation -->
-            <div class="ai-alternative">
-                <span>ou</span>
-                <button id="start-ai-chat" class="btn-ai-chat">
+            <!-- CTA to Start Conversation -->
+            <div style="text-align: center; margin-top: 48px;">
+                <button id="start-luna-chat" class="btn btn-primary btn-lg" style="padding: 20px 48px; font-size: 1.1rem; background: linear-gradient(135deg, #8b5cf6 0%, #a855f7 100%);">
                     <i class="fas fa-comments"></i>
-                    Deixe a IA me guiar com perguntas
+                    Conversar com a Luna
                 </button>
+                <p style="color: var(--color-text-muted); margin-top: 16px; font-size: 0.9rem;">
+                    <i class="fas fa-info-circle"></i> Ela está sempre disponível no canto da tela ✨
+                </p>
             </div>
 
             <!-- Stats -->
@@ -643,7 +611,9 @@
         <span>Luna IA</span>
     </button>
 
-    <script src="script.js"></script>
-    <script src="ai-search.js"></script>
+    <script src="assets/js/core/main.js"></script>
+    <script src="assets/js/ai/search.js"></script>
+    <script src="assets/js/ai/conversation-engine.js"></script>
+    <script src="assets/js/ai/lead-capture.js"></script>
 </body>
 </html>
