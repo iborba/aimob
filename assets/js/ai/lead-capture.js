@@ -593,20 +593,20 @@ function startChat(initialMessage = null) {
     // FIXED: Always reset chatStarted flag when starting fresh
     // This allows the chat to be opened multiple times
     
-    // Check if messages already exist - if so, reset first
+    // Get messages container once
     const messagesContainer = document.getElementById('chat-messages');
-    if (messagesContainer && messagesContainer.children.length > 0) {
+    const optionsContainer = document.getElementById('ai-options');
+    
+    if (!messagesContainer) return;
+    
+    // Check if messages already exist - if so, reset first
+    if (messagesContainer.children.length > 0) {
         console.log('Chat messages already exist, resetting first...');
         resetChat(); // This sets chatStarted = false
     }
     
     // Now set chatStarted to true for this session
     chatStarted = true;
-    
-    const messagesContainer = document.getElementById('chat-messages');
-    const optionsContainer = document.getElementById('ai-options');
-    
-    if (!messagesContainer) return;
     
     // Clear everything
     messagesContainer.innerHTML = '';
