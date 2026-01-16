@@ -59,8 +59,13 @@ function initLunaSidebar() {
     setTimeout(() => {
         addLunaSidebarMessage("Oi! Vi que você está procurando imóveis. Que tal eu te ajudar a refinar sua busca? 😊");
         setTimeout(() => {
-            // Começar com timeline (mais natural)
-            askRefinementQuestion('timeline', sidebarState, savedData);
+            // PRIORIDADE 1: LOCALIZAÇÃO (CRÍTICO - nunca foi perguntado!)
+            if (!savedData.location) {
+                askRefinementQuestion('location', sidebarState, savedData);
+            } else {
+                // Se já tem localização, perguntar sobre características do imóvel
+                askRefinementQuestion('property_features', sidebarState, savedData);
+            }
         }, 1500);
     }, 500);
     
@@ -99,6 +104,32 @@ function askRefinementQuestion(type, state, savedData) {
     let question = null;
     
     switch(type) {
+        // PRIORIDADE 1: LOCALIZAÇÃO (CRÍTICO!)
+        case 'location':
+            question = {
+                message: "Me conta... qual região você tá pensando? Tipo, Zona Sul, Centro, Zona Norte, ou alguma cidade da região metropolitana? Isso é super importante pra eu te mostrar as melhores opções! 😊",
+                field: 'location',
+                type: 'text'
+            };
+            break;
+        // PRIORIDADE 2: Características do imóvel
+        case 'property_features':
+            question = {
+                message: "E tem alguma coisa que é ESSENCIAL pra você no imóvel? Tipo, aceitar pets, piscina, academia, perto de transporte, segurança...",
+                field: 'features',
+                type: 'text'
+            };
+            break;
+        case 'bedrooms_refine':
+            if (!savedData.bedrooms) {
+                question = {
+                    message: "E quantos quartos você precisa? Isso ajuda a filtrar melhor as opções!",
+                    field: 'bedrooms',
+                    type: 'text'
+                };
+            }
+            break;
+        // PRIORIDADE 3: Informações do cliente (depois de saber sobre o imóvel)
         case 'timeline':
             question = {
                 message: "E me diz... você tem alguma pressa nisso? Tipo, tem algum prazo ou você tá mais explorando as opções?",
@@ -113,24 +144,10 @@ function askRefinementQuestion(type, state, savedData) {
                 type: 'text'
             };
             break;
-        case 'decision_makers':
-            question = {
-                message: "E essa decisão é só sua ou tem mais alguém envolvido? Tipo, parceiro, família... só pra eu saber!",
-                field: 'decision_makers',
-                type: 'text'
-            };
-            break;
         case 'current_situation':
             question = {
                 message: "E me conta... hoje você tá alugando, já tem um lugar seu, ou tá morando com a família? Só pra eu entender melhor sua situação!",
                 field: 'current_situation',
-                type: 'text'
-            };
-            break;
-        case 'features':
-            question = {
-                message: "E tem alguma coisa que é ESSENCIAL pra você no imóvel? Tipo, aceitar pets, piscina, academia, perto de transporte...",
-                field: 'features',
                 type: 'text'
             };
             break;
@@ -155,18 +172,29 @@ function handleSidebarInput(state, savedData) {
     const question = state.currentQuestion;
     if (question) {
         // Save answer (could update filters)
-        processSidebarAnswer(question.field, text, savedData);
+        const filtersChanged = processSidebarAnswer(question.field, text, savedData);
         
-        // Ask next question in sequence
+        // Ask next question in sequence - PRIORIDADE: IMÓVEL primeiro, CLIENTE depois
         setTimeout(() => {
-            if (!state.questionsAsked.has('payment')) {
+            // 1. LOCALIZAÇÃO (se não foi perguntado ainda)
+            if (!state.questionsAsked.has('location') && !savedData.location) {
+                askRefinementQuestion('location', state, savedData);
+            }
+            // 2. Características do imóvel
+            else if (!state.questionsAsked.has('property_features')) {
+                askRefinementQuestion('property_features', state, savedData);
+            }
+            // 3. Quartos (se não foi informado na conversa inicial)
+            else if (!state.questionsAsked.has('bedrooms_refine') && !savedData.bedrooms) {
+                askRefinementQuestion('bedrooms_refine', state, savedData);
+            }
+            // 4. Informações do cliente (depois de saber sobre o imóvel)
+            else if (!state.questionsAsked.has('timeline')) {
+                askRefinementQuestion('timeline', state, savedData);
+            } else if (!state.questionsAsked.has('payment')) {
                 askRefinementQuestion('payment', state, savedData);
-            } else if (!state.questionsAsked.has('decision_makers')) {
-                askRefinementQuestion('decision_makers', state, savedData);
             } else if (!state.questionsAsked.has('current_situation')) {
                 askRefinementQuestion('current_situation', state, savedData);
-            } else if (!state.questionsAsked.has('features')) {
-                askRefinementQuestion('features', state, savedData);
             } else {
                 addLunaSidebarMessage("Perfeito! Com essas informações, consigo te ajudar ainda melhor. Os resultados já estão filtrados pra você! 😊");
             }
@@ -188,23 +216,78 @@ function processSidebarAnswer(field, value, savedData) {
     let filtersChanged = false;
     
     // Process answer and update filters
-    if (field === 'features') {
+    if (field === 'location') {
+        // Extract location - pode ser zona, bairro, cidade
+        let location = '';
+        
+        // Zonas de Porto Alegre
+        if (lowerValue.includes('zona sul') || lowerValue.includes('sul')) {
+            location = 'Zona Sul';
+        } else if (lowerValue.includes('zona norte') || lowerValue.includes('norte')) {
+            location = 'Zona Norte';
+        } else if (lowerValue.includes('zona leste') || lowerValue.includes('leste')) {
+            location = 'Zona Leste';
+        } else if (lowerValue.includes('zona oeste') || lowerValue.includes('oeste')) {
+            location = 'Zona Oeste';
+        } else if (lowerValue.includes('centro')) {
+            location = 'Centro';
+        } else if (lowerValue.includes('cidade baixa')) {
+            location = 'Cidade Baixa';
+        } else if (lowerValue.includes('moinhos')) {
+            location = 'Moinhos de Vento';
+        } else if (lowerValue.includes('bom fim')) {
+            location = 'Bom Fim';
+        } else if (lowerValue.includes('viamão') || lowerValue.includes('canoas') || lowerValue.includes('cachoeirinha') || 
+                   lowerValue.includes('gravataí') || lowerValue.includes('são leopoldo') || lowerValue.includes('novo hamburgo')) {
+            // Cidades da região metropolitana
+            location = value; // Usar o valor original
+        } else {
+            // Tentar extrair qualquer nome de bairro/cidade mencionado
+            location = value;
+        }
+        
+        if (location) {
+            filters.localizacao = location;
+            savedData.location = location;
+            filtersChanged = true;
+        } else {
+            // Se não conseguiu extrair, usar o valor original como fallback
+            filters.localizacao = value;
+            savedData.location = value;
+            filtersChanged = true;
+        }
+    } else if (field === 'bedrooms') {
+        // Extract bedrooms
+        const bedroomMatch = value.match(/(\d+)/);
+        if (bedroomMatch) {
+            const bedrooms = parseInt(bedroomMatch[1]);
+            filters.quartos = bedrooms;
+            savedData.bedrooms = bedrooms;
+            filtersChanged = true;
+        }
+    } else if (field === 'features') {
         // Extract features and add to filters
         const features = [];
         if (lowerValue.includes('pet') || lowerValue.includes('animal') || lowerValue.includes('cachorro') || lowerValue.includes('gato')) {
-            features.push('pet_friendly');
+            features.push('pet');
         }
         if (lowerValue.includes('piscina')) {
-            features.push('pool');
+            features.push('piscina');
         }
         if (lowerValue.includes('academia') || lowerValue.includes('ginásio')) {
-            features.push('gym');
+            features.push('academia');
         }
         if (lowerValue.includes('transporte') || lowerValue.includes('metrô') || lowerValue.includes('ônibus')) {
-            features.push('transit');
+            features.push('transporte');
         }
         if (lowerValue.includes('segurança') || lowerValue.includes('portaria')) {
-            features.push('security');
+            features.push('segurança');
+        }
+        if (lowerValue.includes('churrasqueira')) {
+            features.push('churrasqueira');
+        }
+        if (lowerValue.includes('elevador')) {
+            features.push('elevador');
         }
         
         if (features.length > 0) {
@@ -215,8 +298,12 @@ function processSidebarAnswer(field, value, savedData) {
     
     // Acknowledge answer using user's words
     let acknowledgment = "";
-    if (field === 'timeline') {
-        if (lowerValue.includes('urgente') || lowerValue.includes('logo') || lowerValue.includes('já') || lowerValue.includes('rápido')) {
+    if (field === 'location') {
+        acknowledgment = `Perfeito! Vou focar na região de ${filters.localizacao || value}. Os resultados já estão sendo atualizados! ✨`;
+    } else if (field === 'bedrooms') {
+        acknowledgment = `Entendi! ${filters.quartos} quarto${filters.quartos > 1 ? 's' : ''}. Vou filtrar as opções!`;
+    } else if (field === 'timeline') {
+        if (lowerValue.includes('urgente') || lowerValue.includes('logo') || lowerValue.includes('já') || lowerValue.includes('rápido') || lowerValue.includes('imediato')) {
             acknowledgment = "Entendi, então você precisa de algo rápido. Vou priorizar opções que possam ser fechadas rapidamente!";
         } else if (lowerValue.includes('explorando') || lowerValue.includes('sem pressa') || lowerValue.includes('quando der')) {
             acknowledgment = "Sem pressa então! Vamos explorar as melhores opções com calma. 😊";

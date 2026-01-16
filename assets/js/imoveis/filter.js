@@ -26,14 +26,15 @@ window.initFilters = function() {
         features: urlParams.get('features') ? urlParams.get('features').split(',') : []
     };
     
-    // Apply filters
+    // Apply filters - but always return results (smart fallback)
     let filteredImoveis = imoveis.filter(imovel => {
         if (filters.tipo && imovel.tipo !== filters.tipo) return false;
         if (filters.quartos && imovel.quartos < filters.quartos) return false;
         if (filters.preco_min && imovel.preco < filters.preco_min) return false;
         if (filters.preco_max && imovel.preco > filters.preco_max) return false;
         if (filters.localizacao && !imovel.regiao.toLowerCase().includes(filters.localizacao.toLowerCase()) && 
-            !imovel.bairro.toLowerCase().includes(filters.localizacao.toLowerCase())) return false;
+            !imovel.bairro.toLowerCase().includes(filters.localizacao.toLowerCase()) &&
+            !imovel.cidade.toLowerCase().includes(filters.localizacao.toLowerCase())) return false;
         if (filters.features.length > 0) {
             const hasAllFeatures = filters.features.every(feature => 
                 imovel.features.some(f => f.toLowerCase().includes(feature.toLowerCase()))
@@ -42,6 +43,102 @@ window.initFilters = function() {
         }
         return true;
     });
+    
+    // SMART FALLBACK: Se não encontrou resultados exatos, mostrar resultados relevantes
+    if (filteredImoveis.length === 0) {
+        // Estratégia: relaxar filtros progressivamente
+        filteredImoveis = imoveis.filter(imovel => {
+            let score = 0;
+            let matches = 0;
+            let totalFilters = 0;
+            
+            // Tipo (obrigatório se especificado)
+            if (filters.tipo) {
+                totalFilters++;
+                if (imovel.tipo === filters.tipo) {
+                    score += 3;
+                    matches++;
+                }
+            }
+            
+            // Quartos (relaxar: aceitar 1 quarto a menos)
+            if (filters.quartos) {
+                totalFilters++;
+                if (imovel.quartos >= filters.quartos) {
+                    score += 2;
+                    matches++;
+                } else if (imovel.quartos >= filters.quartos - 1) {
+                    score += 1; // Quase match
+                }
+            }
+            
+            // Preço (relaxar: aceitar até 20% a mais)
+            if (filters.preco_max) {
+                totalFilters++;
+                if (imovel.preco <= filters.preco_max) {
+                    score += 2;
+                    matches++;
+                } else if (imovel.preco <= filters.preco_max * 1.2) {
+                    score += 1; // Quase match (até 20% a mais)
+                }
+            }
+            
+            // Localização (relaxar: mesma cidade ou região próxima)
+            if (filters.localizacao) {
+                totalFilters++;
+                const locLower = filters.localizacao.toLowerCase();
+                if (imovel.regiao.toLowerCase().includes(locLower) || 
+                    imovel.bairro.toLowerCase().includes(locLower) ||
+                    imovel.cidade.toLowerCase().includes(locLower)) {
+                    score += 3;
+                    matches++;
+                } else if (imovel.cidade === 'Porto Alegre' && locLower.includes('porto alegre')) {
+                    score += 1; // Mesma cidade
+                }
+            }
+            
+            // Features (relaxar: pelo menos uma feature)
+            if (filters.features.length > 0) {
+                totalFilters++;
+                const hasAnyFeature = filters.features.some(feature => 
+                    imovel.features.some(f => f.toLowerCase().includes(feature.toLowerCase()))
+                );
+                if (hasAnyFeature) {
+                    score += 1;
+                    matches++;
+                }
+            }
+            
+            // Retornar se tem pelo menos 1 match ou score >= 2
+            return score >= 2 || matches > 0;
+        });
+        
+        // Se ainda vazio, mostrar os melhores imóveis disponíveis
+        if (filteredImoveis.length === 0) {
+            // Ordenar por relevância: preço médio, bem localizados, com features
+            filteredImoveis = [...imoveis]
+                .sort((a, b) => {
+                    // Priorizar imóveis com mais features
+                    const aFeatures = a.features?.length || 0;
+                    const bFeatures = b.features?.length || 0;
+                    if (aFeatures !== bFeatures) return bFeatures - aFeatures;
+                    // Depois por preço (mais acessíveis primeiro)
+                    return a.preco - b.preco;
+                })
+                .slice(0, 12); // Mostrar até 12 imóveis
+        } else {
+            // Ordenar resultados relaxados por relevância (score)
+            filteredImoveis.sort((a, b) => {
+                // Calcular score para cada imóvel
+                const scoreA = calculateRelevanceScore(a, filters);
+                const scoreB = calculateRelevanceScore(b, filters);
+                return scoreB - scoreA;
+            });
+            
+            // Limitar a 20 resultados mais relevantes
+            filteredImoveis = filteredImoveis.slice(0, 20);
+        }
+    }
     
     // Update page header
     updatePageHeader(filteredImoveis.length, filters);
@@ -53,16 +150,37 @@ window.initFilters = function() {
     renderProperties(filteredImoveis);
 };
 
+// Helper function to calculate relevance score
+function calculateRelevanceScore(imovel, filters) {
+    let score = 0;
+    
+    if (filters.tipo && imovel.tipo === filters.tipo) score += 3;
+    if (filters.quartos && imovel.quartos >= filters.quartos) score += 2;
+    if (filters.preco_max && imovel.preco <= filters.preco_max) score += 2;
+    if (filters.localizacao) {
+        const locLower = filters.localizacao.toLowerCase();
+        if (imovel.regiao.toLowerCase().includes(locLower) || 
+            imovel.bairro.toLowerCase().includes(locLower)) {
+            score += 3;
+        }
+    }
+    if (filters.features && filters.features.length > 0) {
+        const matchingFeatures = filters.features.filter(f => 
+            imovel.features.some(imf => imf.toLowerCase().includes(f.toLowerCase()))
+        ).length;
+        score += matchingFeatures;
+    }
+    
+    return score;
+}
+
 function updatePageHeader(count, filters) {
     const header = document.querySelector('.page-header h1');
     const subtitle = document.querySelector('.page-header p');
     
     if (header) {
-        if (count === 0) {
-            header.innerHTML = 'Nenhum imóvel encontrado';
-        } else {
-            header.innerHTML = `Encontramos <span class="text-gradient">${count} imóveis</span>`;
-        }
+        // NUNCA mostrar "nenhum imóvel encontrado" - sempre mostrar algo
+        header.innerHTML = `Encontramos <span class="text-gradient">${count} imóvel${count > 1 ? 'is' : ''}</span>`;
     }
     
     if (subtitle) {
@@ -73,7 +191,7 @@ function updatePageHeader(count, filters) {
         if (filters.localizacao) filterText.push(filters.localizacao);
         
         if (filterText.length > 0) {
-            subtitle.textContent = `Filtros: ${filterText.join(', ')}`;
+            subtitle.textContent = `Baseado no que você procurou: ${filterText.join(', ')}`;
         } else {
             subtitle.textContent = 'Explore nossa seleção de imóveis na Região Metropolitana de Porto Alegre/RS';
         }
@@ -108,16 +226,37 @@ function renderProperties(imoveis) {
     // Clear existing
     grid.innerHTML = '';
     
+    // NUNCA mostrar "nenhum imóvel encontrado" - sempre renderizar algo
+    // Se chegou aqui, filteredImoveis já tem resultados (graças ao fallback inteligente)
+    
     if (imoveis.length === 0) {
-        grid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
-                <i class="fas fa-search" style="font-size: 4rem; color: var(--color-text-muted); margin-bottom: 20px;"></i>
-                <h3 style="margin-bottom: 12px;">Nenhum imóvel encontrado</h3>
-                <p style="color: var(--color-text-muted); margin-bottom: 24px;">
-                    Tente ajustar os filtros ou <a href="../index.html" style="color: var(--color-primary);">volte para conversar com a Luna</a>
-                </p>
-            </div>
+        // Fallback final: mostrar os melhores imóveis disponíveis
+        const allImoveis = window.imoveisPOA || [];
+        const bestImoveis = [...allImoveis]
+            .sort((a, b) => {
+                const aFeatures = a.features?.length || 0;
+                const bFeatures = b.features?.length || 0;
+                if (aFeatures !== bFeatures) return bFeatures - aFeatures;
+                return a.preco - b.preco;
+            })
+            .slice(0, 12);
+        
+        bestImoveis.forEach(imovel => {
+            const card = createPropertyCard(imovel);
+            grid.appendChild(card);
+        });
+        
+        // Adicionar mensagem amigável
+        const messageDiv = document.createElement('div');
+        messageDiv.style.cssText = 'grid-column: 1/-1; text-align: center; padding: 20px; background: rgba(139, 92, 246, 0.05); border-radius: 12px; margin-top: 20px;';
+        messageDiv.innerHTML = `
+            <p style="color: var(--color-text); margin: 0;">
+                <i class="fas fa-lightbulb" style="color: #8b5cf6; margin-right: 8px;"></i>
+                <strong>Dica da Luna:</strong> Essas são algumas opções que podem te interessar! 
+                <a href="../index.html" style="color: var(--color-primary); text-decoration: underline;">Converse comigo</a> para refinar ainda mais sua busca! 😊
+            </p>
         `;
+        grid.appendChild(messageDiv);
         return;
     }
     

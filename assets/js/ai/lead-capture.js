@@ -882,20 +882,36 @@ function processNaturalLanguage(text, field) {
         }
     }
     
-    // Location extraction
-    if (field === 'location') {
+    // Location extraction - Porto Alegre/RS e Região Metropolitana
+    if (field === 'location' || lowerText.match(/zona|bairro|região|localização|perto|próximo|cidade|porto alegre|viamão|canoas|cachoeirinha|gravataí|são leopoldo|novo hamburgo/i)) {
         const locations = {
+            // Zonas de Porto Alegre
             'zona sul': 'Zona Sul',
+            'zona norte': 'Zona Norte',
+            'zona leste': 'Zona Leste',
             'zona oeste': 'Zona Oeste',
             'centro': 'Centro',
-            'alphaville': 'Alphaville',
-            'pinheiros': 'Pinheiros',
-            'vila olímpia': 'Vila Olímpia',
-            'moema': 'Moema',
-            'jardins': 'Jardins',
-            'itaim': 'Itaim Bibi'
+            'cidade baixa': 'Cidade Baixa',
+            // Bairros importantes
+            'moinhos de vento': 'Moinhos de Vento',
+            'moinhos': 'Moinhos de Vento',
+            'bom fim': 'Bom Fim',
+            'petrópolis': 'Petrópolis',
+            'bela vista': 'Bela Vista',
+            'auxiliadora': 'Auxiliadora',
+            'rio branco': 'Rio Branco',
+            'centro histórico': 'Centro Histórico',
+            // Cidades da Região Metropolitana
+            'viamão': 'Viamão',
+            'canoas': 'Canoas',
+            'cachoeirinha': 'Cachoeirinha',
+            'gravataí': 'Gravataí',
+            'são leopoldo': 'São Leopoldo',
+            'novo hamburgo': 'Novo Hamburgo',
+            'porto alegre': 'Porto Alegre'
         };
         
+        // Tentar match exato primeiro
         for (const [key, value] of Object.entries(locations)) {
             if (lowerText.includes(key)) {
                 extracted.location = value;
@@ -903,12 +919,24 @@ function processNaturalLanguage(text, field) {
             }
         }
         
+        // Se não encontrou match exato, tentar extrair qualquer nome de bairro/cidade mencionado
+        if (!extracted.location) {
+            // Procurar por padrões como "em [local]", "na [local]", "perto de [local]"
+            const locationMatch = lowerText.match(/(?:em|na|no|perto de|próximo de|região de)\s+([a-záàâãéêíóôõúç\s]+?)(?:,|\.|$|com|que|tipo)/i);
+            if (locationMatch && locationMatch[1]) {
+                const potentialLocation = locationMatch[1].trim();
+                if (potentialLocation.length > 2 && potentialLocation.length < 30) {
+                    extracted.location = potentialLocation;
+                }
+            }
+        }
+        
         // Features from location context
-        if (lowerText.match(/metrô|transporte|estação/i)) {
-            extracted.mustHaveFeatures = ['transit'];
+        if (lowerText.match(/metrô|transporte|estação|ônibus/i)) {
+            extracted.mustHaveFeatures = [...(extracted.mustHaveFeatures || []), 'transporte'];
         }
         if (lowerText.match(/pet|animal|cachorro|gato/i)) {
-            extracted.mustHaveFeatures = [...(extracted.mustHaveFeatures || []), 'pet_friendly'];
+            extracted.mustHaveFeatures = [...(extracted.mustHaveFeatures || []), 'pet friendly'];
         }
     }
     

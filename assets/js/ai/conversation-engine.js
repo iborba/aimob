@@ -241,7 +241,26 @@ function decideNextQuestion(context) {
     
     // Priority order: what's most critical and what makes sense in context
     
-    // 1. Budget - Ask gently when needed, more conversational
+    // 1. LOCALIZAÇÃO - CRÍTICO! Perguntar antes de tudo
+    if (!context.hasLocation && !justMentioned.has('location') && !allMessages.match(/zona|bairro|região|localização|perto|próximo|cidade|porto alegre/i)) {
+        let question = "";
+        if (context.hasPropertyType) {
+            question = `Ah, legal! E onde você tá pensando em encontrar esse ${leadData.propertyType}? `;
+        } else {
+            question = "E me conta... qual região você tá pensando? ";
+        }
+        question += "Tipo, Zona Sul, Centro, Zona Norte, ou alguma cidade da região metropolitana? Isso é super importante! 😊";
+        
+        return {
+            id: 'location_priority',
+            message: question,
+            field: 'location',
+            type: 'text',
+            optional: false
+        };
+    }
+    
+    // 2. Budget - Ask gently when needed, more conversational
     if (!context.hasBudget && !justMentioned.has('budget') && !allMessages.match(/mil|milhão|reais|r\$/)) {
         // Build contextual question - more flexible and friendly
         let question = "";
