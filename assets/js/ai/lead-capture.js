@@ -886,6 +886,24 @@ function processNaturalLanguage(text, field) {
         }
     }
     
+    // Name extraction - simple, just take the text if it's a name field
+    if (field === 'name' || !leadData.name) {
+        // Remove common prefixes and clean up
+        let nameText = text.trim();
+        // Remove "meu nome é", "eu sou", etc
+        nameText = nameText.replace(/^(meu nome é|eu sou|eu sou o|eu sou a|me chamo|sou o|sou a|chamo)\s+/i, '');
+        // Take first word or first two words as name
+        const nameParts = nameText.split(/\s+/);
+        if (nameParts.length > 0 && nameParts[0].length > 1) {
+            // Take first name (or first two if they're short)
+            if (nameParts.length > 1 && nameParts[0].length <= 3 && nameParts[1].length > 2) {
+                extracted.name = nameParts[0] + ' ' + nameParts[1];
+            } else {
+                extracted.name = nameParts[0];
+            }
+        }
+    }
+    
     // Phone/WhatsApp extraction
     if (field === 'phone' || !leadData.phone) {
         // Match phone patterns: (51) 99999-9999, 51 999999999, 99999-9999, etc
@@ -1208,57 +1226,74 @@ function handleTextInput() {
     const needsValidation = input.dataset.stepValidation === 'true';
     const isOptional = input.dataset.stepOptional === 'true';
     
-    if (!text && !isOptional) {
-        showNotification('Por favor, digite uma resposta', 'error');
-        return;
-    }
+    // Check if we're using conversation engine (preferred method)
+    const usingConversationEngine = typeof window.conversationEngine !== 'undefined' && window.conversationEngine.handleConversation;
     
-    if (text && needsValidation) {
-        const step = leadCaptureFlow.find(s => s.field === field);
-        if (step && step.validation && !step.validation(text)) {
-            showNotification(step.errorMessage || 'Resposta inválida', 'error');
+    // Only show validation errors if NOT using conversation engine
+    // Conversation engine handles its own validation
+    if (!usingConversationEngine) {
+        if (!text && !isOptional) {
+            showNotification('Por favor, digite uma resposta', 'error');
             return;
+        }
+        
+        if (text && needsValidation) {
+            const step = leadCaptureFlow.find(s => s.field === field);
+            if (step && step.validation && !step.validation(text)) {
+                showNotification(step.errorMessage || 'Resposta inválida', 'error');
+                return;
+            }
         }
     }
     
     if (text) {
         addUserMessage(text);
         
-        // Save answer to leadData
+        // Save answer to leadData first (so conversation engine can use it)
         if (field) {
             saveAnswer(field, text, leadCaptureFlow.find(s => s.field === field));
         }
         
-        // Check for onComplete callback
-        if (input._onComplete && typeof input._onComplete === 'function') {
-            input._onComplete(text);
-            input._onComplete = null;
-            input.value = '';
-            input.style.display = 'none';
-            return;
-        }
-        
-        // Use conversation engine if available (and not handling name)
-        if (field !== 'name' && typeof window.conversationEngine !== 'undefined' && window.conversationEngine.handleConversation) {
+        // Always use conversation engine if available (including for name)
+        // The conversation engine will handle the flow correctly and continue the conversation
+        if (usingConversationEngine) {
             const response = window.conversationEngine.handleConversation(text);
             if (typeof window.processAIResponse === 'function') {
                 window.processAIResponse(response);
             }
-        } else if (field === 'name') {
-            // Name is handled by onComplete callback, nothing to do here
         } else {
-            // Fallback: simple acknowledgment
-            setTimeout(() => {
-                addAIMessage("Entendi!");
-            }, 500);
+            // Fallback: check for onComplete callback only if no conversation engine
+            if (input._onComplete && typeof input._onComplete === 'function') {
+                input._onComplete(text);
+                input._onComplete = null;
+                input.value = '';
+                input.style.display = 'none';
+                return;
+            } else {
+                // Simple acknowledgment
+                setTimeout(() => {
+                    addAIMessage("Entendi!");
+                }, 500);
+            }
         }
     } else {
-        // If optional and empty, just continue
-        setTimeout(() => processNextStep(), 1000);
+        // If optional and empty, just continue without error
+        if (isOptional) {
+            // Continue conversation if using engine
+            if (usingConversationEngine) {
+                const response = window.conversationEngine.handleConversation('');
+                if (typeof window.processAIResponse === 'function') {
+                    window.processAIResponse(response);
+                }
+            } else {
+                setTimeout(() => processNextStep(), 1000);
+            }
+        }
     }
     
+    // Clear input but keep it visible for next question (conversation engine will manage it)
     input.value = '';
-    input.style.display = 'none';
+    // Don't hide input - conversation engine will show it when needed via showTextInput
 }
 
 // ========================================

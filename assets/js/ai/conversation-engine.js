@@ -379,8 +379,11 @@ function handleConversation(userMessage) {
     });
     conversationMemory.lastUserMessage = userMessage;
     
-    // Extract data from message
-    const extracted = processNaturalLanguage(userMessage, 'motivation.story');
+    // Extract data from message - use field from current question if available
+    // Check if there's a current question field from the input
+    const input = document.getElementById('chat-input');
+    const currentField = input?.dataset?.stepField || 'motivation.story';
+    const extracted = processNaturalLanguage(userMessage, currentField);
     if (Object.keys(extracted).length > 0) {
         mergeData(leadData, extracted);
         conversationMemory.extractedData = { ...conversationMemory.extractedData, ...extracted };
@@ -519,9 +522,18 @@ function processAIResponse(response) {
                         timestamp: new Date()
                     });
                     
-                    // Show input field
+                    // Show input field (keep it visible for continuous conversation)
                     if (typeof showTextInput === 'function') {
                         showTextInput(response.nextQuestion);
+                    } else {
+                        // Fallback: ensure input is visible
+                        const input = document.getElementById('chat-input');
+                        if (input) {
+                            input.style.display = 'block';
+                            input.placeholder = response.nextQuestion.placeholder || "Digite sua resposta...";
+                            input.dataset.stepField = response.nextQuestion.field || '';
+                            input.focus();
+                        }
                     }
                 }
             }, 1500);
