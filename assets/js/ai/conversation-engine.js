@@ -223,7 +223,7 @@ function generateAcknowledgment(userMessage, extractedData) {
     
     // If many data points extracted, use generic acknowledgment (more natural)
     if (dataPointsCount >= 3) {
-        acknowledgment = "Perfeito! Já entendi o que você precisa. Deixa eu ver as melhores opções...";
+        acknowledgment = "Perfeito! Já entendi o que você precisa. ";
     } else if (dataPointsCount >= 2) {
         // Medium amount - slightly more specific but still natural
         if (extractedData.propertyType) {
@@ -238,17 +238,11 @@ function generateAcknowledgment(userMessage, extractedData) {
         acknowledgment = "Ah, entendi! " + parts[0] + ". ";
     } else {
         // If we can't extract much, use a more general but still acknowledging response
-        if (userMessage.length > 30) {
-            acknowledgment = "Entendi! Deixa eu ver se entendi direito o que você precisa... ";
-        } else {
-            acknowledgment = "Entendi! ";
-        }
+        acknowledgment = "Entendi! ";
     }
     
-    // Add a friendly transition (only if not already complete)
-    if (!acknowledgment.includes('...') && !acknowledgment.endsWith('.')) {
-        acknowledgment += "Legal! ";
-    }
+    // REMOVED: Don't add "Legal!" transition to avoid duplication
+    // The acknowledgment should be complete and single
     
     return acknowledgment.trim();
 }
