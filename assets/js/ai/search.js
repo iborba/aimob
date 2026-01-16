@@ -535,7 +535,7 @@ function createAIPropertyCard(property) {
                     </div>
                 </div>
                 <div class="property-footer">
-                    <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                    <a href="pages/imovel-detalhe.html?id=${property.id}" class="btn btn-outline">Ver Detalhes</a>
                     <a href="https://wa.me/5511999999999?text=Olá! Tenho interesse no imóvel: ${encodeURIComponent(property.title)}" class="btn-whatsapp">
                         <i class="fab fa-whatsapp"></i>
                     </a>

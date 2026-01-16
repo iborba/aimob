@@ -295,7 +295,7 @@ function createPropertyCard(imovel) {
     
     card.innerHTML = `
         <div class="property-image">
-            <a href="imovel-detalhe.html?id=${imovel.id}" class="property-image-link">
+            <a href="pages/imovel-detalhe.html?id=${imovel.id}" class="property-image-link">
                 <img src="${imovel.imagem}" alt="${imovel.titulo}" loading="lazy">
             </a>
             ${imovel.preco > 1500000 ? '<span class="badge badge-premium">Premium</span>' : ''}
@@ -338,7 +338,7 @@ function createPropertyCard(imovel) {
             </div>
             ` : ''}
             <div class="property-footer">
-                <a href="imovel-detalhe.html?id=${imovel.id}" class="btn btn-outline">Ver Detalhes</a>
+                <a href="pages/imovel-detalhe.html?id=${imovel.id}" class="btn btn-outline">Ver Detalhes</a>
                 <a href="https://wa.me/5551999999999?text=Olá! Tenho interesse no imóvel: ${encodeURIComponent(imovel.titulo)}" class="btn-whatsapp" target="_blank">
                     <i class="fab fa-whatsapp"></i>
                 </a>
