@@ -533,6 +533,7 @@
     color: white;
     font-size: 0.75rem;
     font-weight: 600;
+    z-index: 5;
 }
 
 .ai-match-score.high {

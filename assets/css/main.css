@@ -585,6 +585,7 @@ ul {
     left: var(--space-md);
     display: flex;
     gap: var(--space-sm);
+    z-index: 5;
 }
 
 .badge {
