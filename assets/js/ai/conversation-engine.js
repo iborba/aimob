@@ -337,10 +337,12 @@ function decideNextQuestion(context) {
     // First conversation focuses ONLY on: type, bedrooms, budget, location
     
     // 6. Check if we have enough info to show results
-    // For initial filter, we need at least: property type OR budget OR location
+    // FIXED: Require at least: property type AND location AND (budget OR bedrooms)
+    // This ensures we have enough info to filter meaningfully
     // Timeline, payment, etc. will be asked in sidebar for refinement
-    const hasEnoughInfo = (context.hasPropertyType || context.hasBudget || context.hasLocation || 
-                          context.hasBedrooms || context.hasMotivation);
+    const hasEnoughInfo = context.hasPropertyType && 
+                          context.hasLocation && 
+                          (context.hasBudget || context.hasBedrooms);
     
     if (hasEnoughInfo) {
         // Proceed directly to closing - NO contact info questions here

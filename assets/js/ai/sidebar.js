@@ -290,6 +290,27 @@ function askRefinementQuestion(type, state, savedData) {
                 type: 'text'
             };
             break;
+        case 'contact':
+            question = {
+                message: "Pra eu te enviar as melhores opções e você não perder nenhuma oportunidade, me passa seu WhatsApp ou e-mail? 😊",
+                field: 'contact',
+                type: 'text'
+            };
+            break;
+        case 'name':
+            question = {
+                message: "Qual seu nome? Pra eu te chamar pelo nome! 😊",
+                field: 'name',
+                type: 'text'
+            };
+            break;
+        case 'motivation':
+            question = {
+                message: "Me conta... qual é o motivo principal da sua busca? Tipo, sair do aluguel, família crescendo, investimento, mudança de vida...",
+                field: 'motivation',
+                type: 'text'
+            };
+            break;
     }
     
     if (question) {
@@ -339,7 +360,15 @@ function handleSidebarInput(state, savedData) {
             else if (!state.questionsAsked.has('bedrooms_refine') && !savedData.bedrooms) {
                 askRefinementQuestion('bedrooms_refine', state, savedData);
             }
-            // 4. Informações do cliente (depois de saber sobre o imóvel)
+            // 4. Nome (se ainda não foi coletado)
+            else if (!state.questionsAsked.has('name') && !savedData.name) {
+                askRefinementQuestion('name', state, savedData);
+            }
+            // 5. Motivação (importante para entender o lead)
+            else if (!state.questionsAsked.has('motivation')) {
+                askRefinementQuestion('motivation', state, savedData);
+            }
+            // 6. Informações do cliente (depois de saber sobre o imóvel)
             else if (!state.questionsAsked.has('timeline')) {
                 askRefinementQuestion('timeline', state, savedData);
             } else if (!state.questionsAsked.has('payment')) {
@@ -549,6 +578,38 @@ function processSidebarAnswer(field, value, savedData) {
                 whyMoving: value // Salva contexto adicional
             };
         }
+    } else if (field === 'name') {
+        // Extract name - use the value directly (user's name)
+        if (value && value.trim().length > 0) {
+            leadUpdates.name = value.trim();
+        }
+    } else if (field === 'motivation') {
+        // Extract motivation
+        let motivationPrimary = null;
+        
+        if (lowerValue.includes('aluguel') || lowerValue.includes('alugando') || lowerValue.includes('sair do aluguel')) {
+            motivationPrimary = 'sair_aluguel';
+        } else if (lowerValue.includes('família') || lowerValue.includes('crescendo') || lowerValue.includes('filhos') || lowerValue.includes('bebê')) {
+            motivationPrimary = 'familia_crescendo';
+        } else if (lowerValue.includes('investimento') || lowerValue.includes('investir') || lowerValue.includes('renda')) {
+            motivationPrimary = 'investimento';
+        } else if (lowerValue.includes('mudança') || lowerValue.includes('mudar') || lowerValue.includes('trocar')) {
+            motivationPrimary = 'mudanca_vida';
+        } else if (lowerValue.includes('primeiro') || lowerValue.includes('primeira vez') || lowerValue.includes('primeira casa')) {
+            motivationPrimary = 'primeiro_imovel';
+        } else if (lowerValue.includes('trabalho') || lowerValue.includes('emprego') || lowerValue.includes('carreira')) {
+            motivationPrimary = 'mudanca_trabalho';
+        } else {
+            // Se não identificou categoria específica, salva o texto como motivação primária
+            motivationPrimary = 'outro';
+        }
+        
+        if (motivationPrimary) {
+            leadUpdates.motivation = {
+                primary: motivationPrimary,
+                story: value // Salva a história completa
+            };
+        }
     } else if (field === 'contact') {
         // Extract phone or email
         const phoneMatch = value.match(/(?:\(?(\d{2})\)?\s*)?(\d{4,5}[-.\s]?\d{4,5})/);
@@ -646,6 +707,20 @@ function processSidebarAnswer(field, value, savedData) {
             acknowledgment = "Entendi, você está morando com a família. É hora de ter seu próprio espaço! 🏠";
         } else {
             acknowledgment = "Entendi sobre sua situação atual! ";
+        }
+    } else if (field === 'name') {
+        acknowledgment = `Prazer, ${value}! 😊 Vou te chamar pelo nome daqui pra frente!`;
+    } else if (field === 'motivation') {
+        if (lowerValue.includes('aluguel') || lowerValue.includes('alugando')) {
+            acknowledgment = "Entendi! Sair do aluguel é um grande passo. Vou focar em opções que fazem sentido pra essa transição! 🏠";
+        } else if (lowerValue.includes('família') || lowerValue.includes('crescendo')) {
+            acknowledgment = "Que legal! Família crescendo precisa de mais espaço. Vou te mostrar opções perfeitas pra vocês! 👨‍👩‍👧‍👦";
+        } else if (lowerValue.includes('investimento')) {
+            acknowledgment = "Ótimo! Investimento imobiliário é uma excelente escolha. Vou focar em opções com bom potencial! 💰";
+        } else if (lowerValue.includes('mudança') || lowerValue.includes('mudar')) {
+            acknowledgment = "Entendi! Mudança de vida é sempre emocionante. Vou te ajudar a encontrar o lugar perfeito! ✨";
+        } else {
+            acknowledgment = "Entendi! Vou considerar isso na busca. Obrigada por compartilhar! 😊";
         }
     } else if (field === 'contact') {
         const phoneMatch = value.match(/(?:\(?(\d{2})\)?\s*)?(\d{4,5}[-.\s]?\d{4,5})/);
