@@ -637,6 +637,16 @@
             document.getElementById('lead-detail-modal').classList.remove('active');
         }
         
+        // FIXED: Close modal with ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' || e.keyCode === 27) {
+                const modal = document.getElementById('lead-detail-modal');
+                if (modal && modal.classList.contains('active')) {
+                    closeLeadDetail();
+                }
+            }
+        });
+        
         // Listen for new leads (from chatbot)
         window.addEventListener('storage', (e) => {
             if (e.key === 'larprime_leads') {
