@@ -3,6 +3,31 @@
 // Conversational chatbot that collects valuable lead data
 // ========================================
 
+// Make openLunaChat available immediately (before DOMContentLoaded)
+// This ensures it's available even if scripts load in different order
+(function() {
+    function openLunaChat(initialMessage = null) {
+        const chatModal = document.getElementById('ai-chat-modal');
+        if (!chatModal) {
+            console.error('AI Chat Modal not found!');
+            return;
+        }
+        
+        chatModal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Reset and start chat
+        if (typeof resetChat === 'function') {
+            resetChat();
+        }
+        if (typeof startChat === 'function') {
+            startChat(initialMessage);
+        }
+    }
+    
+    window.openLunaChat = openLunaChat;
+})();
+
 document.addEventListener('DOMContentLoaded', function() {
     initAISearch();
     initAIChat();
@@ -649,7 +674,7 @@ function openLunaChat(initialMessage = null) {
     }
 }
 
-// Make it globally available
+// Make it globally available IMMEDIATELY
 window.openLunaChat = openLunaChat;
 
 // ========================================
@@ -944,7 +969,7 @@ function processNaturalLanguage(text, field) {
         // Se não encontrou match exato, tentar extrair qualquer nome de cidade mencionado
         if (!extracted.location) {
             // Procurar por padrões como "em [cidade]", "na [cidade]", "de [cidade]"
-            const cityMatch = lowerText.match(/(?:em|na|no|de|da|em|na)\s+([a-záàâãéêíóôõúç\s]+?)(?:,|\.|$|região|metropolitana|rs|/)/i);
+            const cityMatch = lowerText.match(/(?:em|na|no|de|da)\s+([a-záàâãéêíóôõúç\s]+?)(?:,|\.|$|região|metropolitana|rs)/i);
             if (cityMatch && cityMatch[1]) {
                 const potentialCity = cityMatch[1].trim();
                 // Validar se parece uma cidade (não muito curto, não muito longo, não é palavra comum)
