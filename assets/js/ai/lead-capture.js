@@ -1316,8 +1316,8 @@ function saveLeadToStorage() {
         // Save back
         localStorage.setItem('larprime_leads', JSON.stringify(existingLeads));
         
-        // Make leadData globally accessible for sidebar
-        window.leadData = leadData;
+    // Make leadData globally accessible for sidebar (always keep in sync)
+    window.leadData = leadData;
         
         // Trigger storage event for admin panel
         window.dispatchEvent(new StorageEvent('storage', {
