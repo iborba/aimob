@@ -629,10 +629,10 @@ function startChat(initialMessage = null) {
     }, 300);
     
     setTimeout(() => {
-        addAIMessage("Me conta: o que você tá procurando? Pode falar de forma bem natural, como se estivesse conversando com uma amiga. Tipo: número de quartos, localização, orçamento, amenities que são importantes pra você... Tudo que vier à mente! 😊");
-    }, 1500);
-    
-    setTimeout(() => {
+        // SINGLE message - no duplication
+        const openingMessage = "Me conta: o que você tá procurando? Pode falar de forma bem natural, como se estivesse conversando com uma amiga. Tipo: número de quartos, localização, orçamento, amenities que são importantes pra você... Tudo que vier à mente! 😊";
+        addAIMessage(openingMessage);
+        
         // If there's an initial message, use it directly
         if (initialMessage) {
             setTimeout(() => {
@@ -645,8 +645,7 @@ function startChat(initialMessage = null) {
                 }
             }, 800);
         } else {
-            // Start open conversation - more flexible
-            addAIMessage("Me conta: o que você tá procurando? Pode falar do jeito que quiser, como se estivesse conversando com uma amiga! Não precisa ter tudo certo, a gente vai descobrindo juntos! 😊");
+            // Show input field for user to type
             showTextInput({
                 field: 'motivation.story',
                 type: 'text',
@@ -654,7 +653,7 @@ function startChat(initialMessage = null) {
                 placeholder: "Ex: Quero um apartamento de 3 quartos perto do metrô..."
             });
         }
-    }, 1800);
+    }, 1500);
 }
 
 // openLunaChat is now defined at the top of the file (IIFE)
@@ -1477,21 +1476,41 @@ function initLeadExport() {
 let lastAIMessageText = null; // Track last message to prevent duplicates
 
 function addAIMessage(text) {
-    // Prevent duplicate messages
-    if (lastAIMessageText === text) {
-        console.log('Duplicate AI message detected, ignoring:', text);
+    // Prevent duplicate messages - improved check
+    const textTrimmed = text.trim();
+    
+    // Check exact match
+    if (lastAIMessageText === textTrimmed) {
+        console.log('Duplicate AI message detected (exact), ignoring:', textTrimmed);
         return;
     }
-    lastAIMessageText = text;
+    
+    // Check if message is very similar (same intent)
+    if (lastAIMessageText && 
+        (textTrimmed.includes('Me conta: o que você tá procurando') && 
+         lastAIMessageText.includes('Me conta: o que você tá procurando'))) {
+        console.log('Duplicate AI message detected (similar intent), ignoring:', textTrimmed);
+        return;
+    }
+    
+    lastAIMessageText = textTrimmed;
     
     const messagesContainer = document.getElementById('chat-messages');
     if (!messagesContainer) return;
     
-    // Check if this message already exists in DOM
+    // Check if this message already exists in DOM (improved)
     const existingMessages = messagesContainer.querySelectorAll('.ai-message-content');
     for (let msg of existingMessages) {
-        if (msg.textContent.trim() === text.trim()) {
-            console.log('Message already in DOM, ignoring:', text);
+        const msgText = msg.textContent.trim();
+        // Exact match
+        if (msgText === textTrimmed) {
+            console.log('Message already in DOM (exact), ignoring:', textTrimmed);
+            return;
+        }
+        // Similar intent check
+        if (msgText.includes('Me conta: o que você tá procurando') && 
+            textTrimmed.includes('Me conta: o que você tá procurando')) {
+            console.log('Message already in DOM (similar intent), ignoring:', textTrimmed);
             return;
         }
     }
