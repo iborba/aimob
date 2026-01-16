@@ -327,6 +327,17 @@ function decideNextQuestion(context) {
         };
     }
     
+    // Fallback: if we have some info but not enough for closing, ask for more context
+    // But if we have enough basic info, offer to refine instead
+    if (hasEnoughInfo) {
+        // We have enough info but decideNextQuestion didn't close - offer refinement
+        return {
+            type: 'close',
+            message: "Perfeito! Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊\n\nSe quiser refinar a pesquisa depois, é só pedir pra mim! Estou sempre aqui pra ajudar! ✨",
+            redirectToResults: true
+        };
+    }
+    
     // Fallback: ask for more context
     return {
         id: 'more_context',
@@ -365,6 +376,11 @@ function handleConversation(userMessage) {
     
     // Generate acknowledgment
     const acknowledgment = generateAcknowledgment(userMessage, extracted);
+    
+    // Update results dynamically if we have enough info (with delay to avoid overload)
+    setTimeout(() => {
+        updateResultsDynamically(context);
+    }, 500);
     
     // Decide next question
     const nextQuestion = decideNextQuestion(context);
@@ -436,18 +452,26 @@ function processAIResponse(response) {
                 // If should redirect to results, do it
                 if (response.nextQuestion.redirectToResults) {
                     setTimeout(() => {
-                        // Build search URL with filters
-                        const filters = buildSearchFilters();
-                        // Use relative path (works with both file:// and http://)
-                        const searchUrl = `pages/imoveis.html?${new URLSearchParams(filters).toString()}`;
-                        
-                        // Show button to go to results
-                        if (typeof showResultsButton === 'function') {
-                            showResultsButton(searchUrl);
-                        } else {
-                            // Fallback: redirect directly
-                            window.location.href = searchUrl;
+                        // Add message about refinement
+                        const refinementMsg = "Se quiser refinar a pesquisa depois, é só pedir pra mim! Estou sempre aqui pra ajudar! ✨";
+                        if (typeof addAIMessage === 'function') {
+                            addAIMessage(refinementMsg);
                         }
+                        
+                        setTimeout(() => {
+                            // Build search URL with filters
+                            const filters = buildSearchFilters();
+                            // Use relative path (works with both file:// and http://)
+                            const searchUrl = `pages/imoveis.html?${new URLSearchParams(filters).toString()}`;
+                            
+                            // Show button to go to results
+                            if (typeof showResultsButton === 'function') {
+                                showResultsButton(searchUrl);
+                            } else {
+                                // Fallback: redirect directly
+                                window.location.href = searchUrl;
+                            }
+                        }, 1500);
                     }, 2000);
                 } else {
                     setTimeout(() => {
@@ -484,6 +508,203 @@ function processAIResponse(response) {
             }, 1500);
         }
     }
+}
+
+// ========================================
+// UPDATE RESULTS DYNAMICALLY DURING CONVERSATION
+// ========================================
+function updateResultsDynamically(context) {
+    // Only update if we have at least some basic info
+    const hasBasicInfo = context.hasPropertyType || context.hasBudget || context.hasLocation || context.hasBedrooms;
+    
+    if (!hasBasicInfo) return;
+    
+    // Build filters from current conversation data
+    const filters = buildSearchFilters();
+    
+    // Check if we're on the index page (has ai-results section)
+    const resultsSection = document.getElementById('ai-results');
+    const resultsGrid = document.getElementById('ai-results-grid');
+    
+    if (!resultsSection || !resultsGrid) return;
+    
+    // Load database if not available
+    if (typeof window.imoveisPOA === 'undefined') {
+        console.log('Database not loaded yet, skipping dynamic update');
+        return;
+    }
+    
+    // Filter properties
+    const imoveis = window.imoveisPOA || [];
+    let filteredImoveis = imoveis.filter(imovel => {
+        if (filters.tipo && imovel.tipo !== filters.tipo) return false;
+        if (filters.quartos && imovel.quartos < filters.quartos) return false;
+        if (filters.preco_max && imovel.preco > filters.preco_max) return false;
+        if (filters.preco_min && imovel.preco < filters.preco_min) return false;
+        if (filters.localizacao) {
+            const locLower = filters.localizacao.toLowerCase();
+            const cidadeLower = imovel.cidade.toLowerCase();
+            const regiaoLower = imovel.regiao.toLowerCase();
+            const bairroLower = imovel.bairro.toLowerCase();
+            
+            if (!cidadeLower.includes(locLower) && 
+                !locLower.includes(cidadeLower) &&
+                !regiaoLower.includes(locLower) && 
+                !bairroLower.includes(locLower)) {
+                return false;
+            }
+        }
+        return true;
+    });
+    
+    // Smart fallback: if no exact matches, show similar properties
+    if (filteredImoveis.length === 0) {
+        filteredImoveis = imoveis.filter(imovel => {
+            let score = 0;
+            if (filters.tipo && imovel.tipo === filters.tipo) score += 3;
+            if (filters.quartos && imovel.quartos >= filters.quartos) score += 2;
+            if (filters.preco_max && imovel.preco <= filters.preco_max) score += 2;
+            if (filters.localizacao) {
+                const locLower = filters.localizacao.toLowerCase();
+                if (imovel.cidade.toLowerCase().includes(locLower)) score += 3;
+            }
+            return score >= 2;
+        }).slice(0, 12);
+    } else {
+        // Limit to 12 most relevant
+        filteredImoveis = filteredImoveis.slice(0, 12);
+    }
+    
+    // Update understanding text
+    const understandingText = document.getElementById('ai-understanding-text');
+    const criteriaTags = document.getElementById('ai-criteria-tags');
+    
+    if (understandingText) {
+        const criteria = [];
+        if (context.hasPropertyType) criteria.push(leadData.propertyType);
+        if (context.hasBedrooms) criteria.push(`${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`);
+        if (context.hasBudget) {
+            const budget = leadData.budget?.max || leadData.budget?.min;
+            if (budget) criteria.push(`até ${formatCurrency(budget)}`);
+        }
+        if (context.hasLocation) criteria.push(leadData.location);
+        
+        understandingText.textContent = criteria.length > 0 
+            ? criteria.join(', ') 
+            : 'Explorando opções...';
+    }
+    
+    if (criteriaTags) {
+        criteriaTags.innerHTML = '';
+        if (context.hasPropertyType) {
+            const tag = document.createElement('span');
+            tag.className = 'ai-tag';
+            tag.textContent = leadData.propertyType;
+            criteriaTags.appendChild(tag);
+        }
+        if (context.hasBedrooms) {
+            const tag = document.createElement('span');
+            tag.className = 'ai-tag';
+            tag.textContent = `${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`;
+            criteriaTags.appendChild(tag);
+        }
+        if (context.hasBudget) {
+            const budget = leadData.budget?.max || leadData.budget?.min;
+            if (budget) {
+                const tag = document.createElement('span');
+                tag.className = 'ai-tag';
+                tag.textContent = formatCurrency(budget);
+                criteriaTags.appendChild(tag);
+            }
+        }
+        if (context.hasLocation) {
+            const tag = document.createElement('span');
+            tag.className = 'ai-tag';
+            tag.textContent = leadData.location;
+            criteriaTags.appendChild(tag);
+        }
+    }
+    
+    // Render properties
+    resultsGrid.innerHTML = '';
+    filteredImoveis.forEach(imovel => {
+        const card = createPropertyCardForResults(imovel);
+        resultsGrid.appendChild(card);
+    });
+    
+    // Show results section
+    resultsSection.style.display = 'block';
+    
+    // Smooth scroll to results
+    setTimeout(() => {
+        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 300);
+}
+
+// ========================================
+// CREATE PROPERTY CARD FOR RESULTS SECTION
+// ========================================
+function createPropertyCardForResults(imovel) {
+    const card = document.createElement('article');
+    card.className = 'property-card property-card-ai';
+    
+    const tipoLabel = {
+        'apartamento': 'Apartamento',
+        'casa': 'Casa',
+        'cobertura': 'Cobertura',
+        'studio': 'Studio'
+    }[imovel.tipo] || imovel.tipo;
+    
+    card.innerHTML = `
+        <div class="property-image">
+            <img src="${imovel.imagem}" alt="${imovel.titulo}" loading="lazy">
+            <button class="property-favorite" aria-label="Favoritar">
+                <i class="far fa-heart"></i>
+            </button>
+            <div class="property-price">${formatCurrency(imovel.preco)}</div>
+        </div>
+        <div class="property-content">
+            <div class="property-location">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>${imovel.bairro}, ${imovel.cidade} - RS</span>
+            </div>
+            <h3 class="property-title">${imovel.titulo}</h3>
+            <p style="color: var(--color-text-muted); font-size: 0.9rem; margin: 8px 0;">${imovel.descricao}</p>
+            <div class="property-features">
+                <div class="feature">
+                    <i class="fas fa-bed"></i>
+                    <span>${imovel.quartos} Quarto${imovel.quartos > 1 ? 's' : ''}</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-bath"></i>
+                    <span>${imovel.banheiros} Banheiro${imovel.banheiros > 1 ? 's' : ''}</span>
+                </div>
+                ${imovel.vagas > 0 ? `
+                <div class="feature">
+                    <i class="fas fa-car"></i>
+                    <span>${imovel.vagas} Vaga${imovel.vagas > 1 ? 's' : ''}</span>
+                </div>
+                ` : ''}
+                <div class="feature">
+                    <i class="fas fa-ruler-combined"></i>
+                    <span>${imovel.area} m²</span>
+                </div>
+            </div>
+            ${imovel.features && imovel.features.length > 0 ? `
+            <div style="margin-top: 12px; display: flex; flex-wrap: wrap; gap: 6px;">
+                ${imovel.features.slice(0, 3).map(f => `<span style="font-size: 0.75rem; padding: 4px 8px; background: rgba(139, 92, 246, 0.1); border-radius: 12px; color: #8b5cf6;">${f}</span>`).join('')}
+            </div>
+            ` : ''}
+            <div class="property-footer">
+                <a href="pages/imovel-detalhe.html?id=${imovel.id}" class="btn btn-outline">Ver Detalhes</a>
+                <a href="https://wa.me/5551999999999?text=Olá! Tenho interesse no imóvel: ${encodeURIComponent(imovel.titulo)}" class="btn-whatsapp" target="_blank">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+            </div>
+        </div>
+    `;
+    
+    return card;
 }
 
 // ========================================
@@ -549,6 +770,7 @@ if (typeof window !== 'undefined') {
         processAIResponse,
         buildSearchFilters,
         showResultsButton,
+        updateResultsDynamically,
         _lastProcessedMessage: null
     };
     
@@ -556,6 +778,7 @@ if (typeof window !== 'undefined') {
     window.processAIResponse = processAIResponse;
     window.buildSearchFilters = buildSearchFilters;
     window.showResultsButton = showResultsButton;
+    window.updateResultsDynamically = updateResultsDynamically;
     
     // Update lastProcessedMessage reference
     Object.defineProperty(window.conversationEngine, '_lastProcessedMessage', {
