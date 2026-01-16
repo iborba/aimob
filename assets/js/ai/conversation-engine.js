@@ -632,13 +632,16 @@ function updateResultsDynamically(context) {
         resultsGrid.appendChild(card);
     });
     
-    // Show results section
+    // Show results section with animation
+    const wasHidden = resultsSection.style.display === 'none' || !resultsSection.style.display;
     resultsSection.style.display = 'block';
     
-    // Smooth scroll to results
-    setTimeout(() => {
-        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 300);
+    // Smooth scroll to results only if section was hidden
+    if (wasHidden) {
+        setTimeout(() => {
+            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
+    }
 }
 
 // ========================================
