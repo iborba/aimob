@@ -846,12 +846,53 @@ function buildSearchFilters() {
         filters.preco_min = leadData.budget.min;
     }
     
-    if (leadData.location) {
+    // Location - semantic parameters
+    if (leadData.location || leadData.city) {
+        filters.cidade = leadData.location || leadData.city;
+    }
+    
+    if (leadData.zone) {
+        filters.zona = leadData.zone;
+    }
+    
+    if (leadData.neighborhood) {
+        filters.bairro = leadData.neighborhood;
+    }
+    
+    // Legacy support
+    if (leadData.location && !filters.cidade) {
         filters.localizacao = leadData.location;
     }
     
+    // Amenities - semantic parameters
+    if (leadData.essentialAmenities && leadData.essentialAmenities.length > 0) {
+        filters.amenities_essenciais = leadData.essentialAmenities.join(',');
+    }
+    
+    if (leadData.highPriorityAmenities && leadData.highPriorityAmenities.length > 0) {
+        filters.amenities_desejaveis = leadData.highPriorityAmenities.join(',');
+    }
+    
+    // Legacy support for mustHaveFeatures
     if (leadData.mustHaveFeatures && leadData.mustHaveFeatures.length > 0) {
         filters.features = leadData.mustHaveFeatures.join(',');
+    }
+    
+    // Additional preferences
+    if (leadData.proximity) {
+        filters.proximidade = leadData.proximity;
+    }
+    
+    if (leadData.needsTransportation) {
+        filters.transporte = 'true';
+    }
+    
+    if (leadData.needsSchools) {
+        filters.escolas = 'true';
+    }
+    
+    if (leadData.minArea) {
+        filters.area_min = leadData.minArea;
     }
     
     return filters;
