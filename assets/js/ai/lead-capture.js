@@ -16,13 +16,18 @@
         chatModal.classList.add('active');
         document.body.style.overflow = 'hidden';
         
-        // Reset and start chat
+        // FIXED: Always reset chat state before starting
+        // This ensures the chat can be opened multiple times
         if (typeof resetChat === 'function') {
-            resetChat();
+            resetChat(); // This resets chatStarted to false
         }
-        if (typeof startChat === 'function') {
-            startChat(initialMessage);
-        }
+        
+        // Small delay to ensure reset is complete
+        setTimeout(() => {
+            if (typeof startChat === 'function') {
+                startChat(initialMessage);
+            }
+        }, 50);
     }
     
     window.openLunaChat = openLunaChat;
@@ -585,19 +590,17 @@ function resetChat() {
 let chatStarted = false; // Prevent multiple starts
 
 function startChat(initialMessage = null) {
-    // IMPROVED: Prevent multiple starts with better check
-    if (chatStarted) {
-        console.log('Chat already started, ignoring duplicate startChat call...');
-        return;
-    }
+    // FIXED: Always reset chatStarted flag when starting fresh
+    // This allows the chat to be opened multiple times
     
-    // Also check if messages already exist
+    // Check if messages already exist - if so, reset first
     const messagesContainer = document.getElementById('chat-messages');
     if (messagesContainer && messagesContainer.children.length > 0) {
         console.log('Chat messages already exist, resetting first...');
-        resetChat();
+        resetChat(); // This sets chatStarted = false
     }
     
+    // Now set chatStarted to true for this session
     chatStarted = true;
     
     const messagesContainer = document.getElementById('chat-messages');
