@@ -241,15 +241,15 @@ function decideNextQuestion(context) {
     
     // Priority order: what's most critical and what makes sense in context
     
-    // 1. LOCALIZAÇÃO - CRÍTICO! Perguntar antes de tudo
-    if (!context.hasLocation && !justMentioned.has('location') && !allMessages.match(/zona|bairro|região|localização|perto|próximo|cidade|porto alegre/i)) {
+    // 1. LOCALIZAÇÃO - CIDADE (CRÍTICO! Perguntar antes de tudo)
+    if (!context.hasLocation && !justMentioned.has('location') && !allMessages.match(/porto alegre|canoas|viamão|gravataí|cachoeirinha|são leopoldo|novo hamburgo|cidade/i)) {
         let question = "";
         if (context.hasPropertyType) {
-            question = `Ah, legal! E onde você tá pensando em encontrar esse ${leadData.propertyType}? `;
+            question = `Ah, legal! E em qual cidade você tá pensando em encontrar esse ${leadData.propertyType}? `;
         } else {
-            question = "E me conta... qual região você tá pensando? ";
+            question = "E me conta... em qual cidade você tá pensando? ";
         }
-        question += "Tipo, Zona Sul, Centro, Zona Norte, ou alguma cidade da região metropolitana? Isso é super importante! 😊";
+        question += "Tipo, Porto Alegre, Canoas, Viamão, Gravataí, ou alguma outra cidade da região metropolitana? Isso é super importante! 😊";
         
         return {
             id: 'location_priority',

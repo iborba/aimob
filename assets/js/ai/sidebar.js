@@ -104,10 +104,10 @@ function askRefinementQuestion(type, state, savedData) {
     let question = null;
     
     switch(type) {
-        // PRIORIDADE 1: LOCALIZAÇÃO (CRÍTICO!)
+        // PRIORIDADE 1: LOCALIZAÇÃO - CIDADE (CRÍTICO!)
         case 'location':
             question = {
-                message: "Me conta... qual região você tá pensando? Tipo, Zona Sul, Centro, Zona Norte, ou alguma cidade da região metropolitana? Isso é super importante pra eu te mostrar as melhores opções! 😊",
+                message: "Me conta... em qual cidade você tá pensando? Tipo, Porto Alegre, Canoas, Viamão, Gravataí, ou alguma outra cidade da região metropolitana? Isso é super importante pra eu te mostrar as melhores opções! 😊",
                 field: 'location',
                 type: 'text'
             };
@@ -217,33 +217,41 @@ function processSidebarAnswer(field, value, savedData) {
     
     // Process answer and update filters
     if (field === 'location') {
-        // Extract location - pode ser zona, bairro, cidade
+        // Extract location - PRIORIDADE: CIDADE primeiro
         let location = '';
         
-        // Zonas de Porto Alegre
-        if (lowerValue.includes('zona sul') || lowerValue.includes('sul')) {
-            location = 'Zona Sul';
-        } else if (lowerValue.includes('zona norte') || lowerValue.includes('norte')) {
-            location = 'Zona Norte';
-        } else if (lowerValue.includes('zona leste') || lowerValue.includes('leste')) {
-            location = 'Zona Leste';
-        } else if (lowerValue.includes('zona oeste') || lowerValue.includes('oeste')) {
-            location = 'Zona Oeste';
-        } else if (lowerValue.includes('centro')) {
-            location = 'Centro';
-        } else if (lowerValue.includes('cidade baixa')) {
-            location = 'Cidade Baixa';
-        } else if (lowerValue.includes('moinhos')) {
-            location = 'Moinhos de Vento';
-        } else if (lowerValue.includes('bom fim')) {
-            location = 'Bom Fim';
-        } else if (lowerValue.includes('viamão') || lowerValue.includes('canoas') || lowerValue.includes('cachoeirinha') || 
-                   lowerValue.includes('gravataí') || lowerValue.includes('são leopoldo') || lowerValue.includes('novo hamburgo')) {
-            // Cidades da região metropolitana
-            location = value; // Usar o valor original
+        // Cidades da região metropolitana (PRIORIDADE)
+        if (lowerValue.includes('porto alegre') || lowerValue.includes('poa')) {
+            location = 'Porto Alegre';
+        } else if (lowerValue.includes('canoas')) {
+            location = 'Canoas';
+        } else if (lowerValue.includes('viamão')) {
+            location = 'Viamão';
+        } else if (lowerValue.includes('gravataí') || lowerValue.includes('gravatai')) {
+            location = 'Gravataí';
+        } else if (lowerValue.includes('cachoeirinha')) {
+            location = 'Cachoeirinha';
+        } else if (lowerValue.includes('são leopoldo') || lowerValue.includes('sao leopoldo')) {
+            location = 'São Leopoldo';
+        } else if (lowerValue.includes('novo hamburgo')) {
+            location = 'Novo Hamburgo';
+        } else if (lowerValue.includes('alvorada')) {
+            location = 'Alvorada';
+        } else if (lowerValue.includes('sapucaia') || lowerValue.includes('sapucaia do sul')) {
+            location = 'Sapucaia do Sul';
         } else {
-            // Tentar extrair qualquer nome de bairro/cidade mencionado
-            location = value;
+            // Tentar extrair qualquer nome de cidade mencionado
+            // Procurar por padrões como "em [cidade]", "na [cidade]"
+            const cityMatch = lowerValue.match(/(?:em|na|no|de|da)\s+([a-záàâãéêíóôõúç\s]+?)(?:,|\.|$|região|metropolitana|rs)/i);
+            if (cityMatch && cityMatch[1]) {
+                const potentialCity = cityMatch[1].trim();
+                if (potentialCity.length > 2 && potentialCity.length < 30) {
+                    location = potentialCity;
+                }
+            } else {
+                // Fallback: usar o valor original (pode ser cidade ou região)
+                location = value;
+            }
         }
         
         if (location) {
@@ -299,7 +307,7 @@ function processSidebarAnswer(field, value, savedData) {
     // Acknowledge answer using user's words
     let acknowledgment = "";
     if (field === 'location') {
-        acknowledgment = `Perfeito! Vou focar na região de ${filters.localizacao || value}. Os resultados já estão sendo atualizados! ✨`;
+        acknowledgment = `Perfeito! Vou focar em ${filters.localizacao || value}. Os resultados já estão sendo atualizados! ✨`;
     } else if (field === 'bedrooms') {
         acknowledgment = `Entendi! ${filters.quartos} quarto${filters.quartos > 1 ? 's' : ''}. Vou filtrar as opções!`;
     } else if (field === 'timeline') {

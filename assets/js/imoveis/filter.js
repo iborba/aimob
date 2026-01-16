@@ -32,9 +32,20 @@ window.initFilters = function() {
         if (filters.quartos && imovel.quartos < filters.quartos) return false;
         if (filters.preco_min && imovel.preco < filters.preco_min) return false;
         if (filters.preco_max && imovel.preco > filters.preco_max) return false;
-        if (filters.localizacao && !imovel.regiao.toLowerCase().includes(filters.localizacao.toLowerCase()) && 
-            !imovel.bairro.toLowerCase().includes(filters.localizacao.toLowerCase()) &&
-            !imovel.cidade.toLowerCase().includes(filters.localizacao.toLowerCase())) return false;
+        if (filters.localizacao) {
+            const locLower = filters.localizacao.toLowerCase();
+            const cidadeLower = imovel.cidade.toLowerCase();
+            const regiaoLower = imovel.regiao.toLowerCase();
+            const bairroLower = imovel.bairro.toLowerCase();
+            
+            // PRIORIDADE: Match por CIDADE primeiro
+            if (!cidadeLower.includes(locLower) && 
+                !locLower.includes(cidadeLower) &&
+                !regiaoLower.includes(locLower) && 
+                !bairroLower.includes(locLower)) {
+                return false;
+            }
+        }
         if (filters.features.length > 0) {
             const hasAllFeatures = filters.features.every(feature => 
                 imovel.features.some(f => f.toLowerCase().includes(feature.toLowerCase()))
@@ -87,13 +98,18 @@ window.initFilters = function() {
             if (filters.localizacao) {
                 totalFilters++;
                 const locLower = filters.localizacao.toLowerCase();
-                if (imovel.regiao.toLowerCase().includes(locLower) || 
-                    imovel.bairro.toLowerCase().includes(locLower) ||
-                    imovel.cidade.toLowerCase().includes(locLower)) {
-                    score += 3;
+                const cidadeLower = imovel.cidade.toLowerCase();
+                
+                // PRIORIDADE: Match por CIDADE primeiro
+                if (cidadeLower.includes(locLower) || locLower.includes(cidadeLower)) {
+                    score += 3; // Match exato de cidade
                     matches++;
-                } else if (imovel.cidade === 'Porto Alegre' && locLower.includes('porto alegre')) {
-                    score += 1; // Mesma cidade
+                } else if (imovel.regiao.toLowerCase().includes(locLower) || 
+                          imovel.bairro.toLowerCase().includes(locLower)) {
+                    score += 2; // Match por região/bairro
+                    matches++;
+                } else if (cidadeLower === 'porto alegre' && locLower.includes('porto alegre')) {
+                    score += 1; // Mesma cidade (fallback)
                 }
             }
             

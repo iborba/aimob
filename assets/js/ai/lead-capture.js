@@ -882,51 +882,43 @@ function processNaturalLanguage(text, field) {
         }
     }
     
-    // Location extraction - Porto Alegre/RS e Região Metropolitana
-    if (field === 'location' || lowerText.match(/zona|bairro|região|localização|perto|próximo|cidade|porto alegre|viamão|canoas|cachoeirinha|gravataí|são leopoldo|novo hamburgo/i)) {
-        const locations = {
-            // Zonas de Porto Alegre
-            'zona sul': 'Zona Sul',
-            'zona norte': 'Zona Norte',
-            'zona leste': 'Zona Leste',
-            'zona oeste': 'Zona Oeste',
-            'centro': 'Centro',
-            'cidade baixa': 'Cidade Baixa',
-            // Bairros importantes
-            'moinhos de vento': 'Moinhos de Vento',
-            'moinhos': 'Moinhos de Vento',
-            'bom fim': 'Bom Fim',
-            'petrópolis': 'Petrópolis',
-            'bela vista': 'Bela Vista',
-            'auxiliadora': 'Auxiliadora',
-            'rio branco': 'Rio Branco',
-            'centro histórico': 'Centro Histórico',
-            // Cidades da Região Metropolitana
-            'viamão': 'Viamão',
+    // Location extraction - PRIORIDADE: CIDADE primeiro
+    if (field === 'location' || lowerText.match(/porto alegre|canoas|viamão|gravataí|cachoeirinha|são leopoldo|novo hamburgo|alvorada|sapucaia|cidade/i)) {
+        const cities = {
+            // Cidades da Região Metropolitana (PRIORIDADE)
+            'porto alegre': 'Porto Alegre',
+            'poa': 'Porto Alegre',
             'canoas': 'Canoas',
-            'cachoeirinha': 'Cachoeirinha',
+            'viamão': 'Viamão',
             'gravataí': 'Gravataí',
+            'gravatai': 'Gravataí',
+            'cachoeirinha': 'Cachoeirinha',
             'são leopoldo': 'São Leopoldo',
+            'sao leopoldo': 'São Leopoldo',
             'novo hamburgo': 'Novo Hamburgo',
-            'porto alegre': 'Porto Alegre'
+            'alvorada': 'Alvorada',
+            'sapucaia do sul': 'Sapucaia do Sul',
+            'sapucaia': 'Sapucaia do Sul'
         };
         
-        // Tentar match exato primeiro
-        for (const [key, value] of Object.entries(locations)) {
+        // Tentar match exato primeiro (CIDADES)
+        for (const [key, value] of Object.entries(cities)) {
             if (lowerText.includes(key)) {
                 extracted.location = value;
                 break;
             }
         }
         
-        // Se não encontrou match exato, tentar extrair qualquer nome de bairro/cidade mencionado
+        // Se não encontrou match exato, tentar extrair qualquer nome de cidade mencionado
         if (!extracted.location) {
-            // Procurar por padrões como "em [local]", "na [local]", "perto de [local]"
-            const locationMatch = lowerText.match(/(?:em|na|no|perto de|próximo de|região de)\s+([a-záàâãéêíóôõúç\s]+?)(?:,|\.|$|com|que|tipo)/i);
-            if (locationMatch && locationMatch[1]) {
-                const potentialLocation = locationMatch[1].trim();
-                if (potentialLocation.length > 2 && potentialLocation.length < 30) {
-                    extracted.location = potentialLocation;
+            // Procurar por padrões como "em [cidade]", "na [cidade]", "de [cidade]"
+            const cityMatch = lowerText.match(/(?:em|na|no|de|da|em|na)\s+([a-záàâãéêíóôõúç\s]+?)(?:,|\.|$|região|metropolitana|rs|/)/i);
+            if (cityMatch && cityMatch[1]) {
+                const potentialCity = cityMatch[1].trim();
+                // Validar se parece uma cidade (não muito curto, não muito longo, não é palavra comum)
+                const commonWords = ['a', 'o', 'de', 'da', 'do', 'em', 'na', 'no', 'para', 'com', 'que', 'tipo', 'região'];
+                if (potentialCity.length > 2 && potentialCity.length < 30 && !commonWords.includes(potentialCity.toLowerCase())) {
+                    extracted.location = potentialCity;
                 }
             }
         }
