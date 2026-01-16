@@ -536,9 +536,11 @@ function processAIResponse(response) {
         if (response.nextQuestion.type === 'close') {
             setTimeout(() => {
                 const closeMsg = response.nextQuestion.message;
-                // Check if already shown
+                // Check if already shown - improved check
                 const alreadyShown = conversationMemory.messages.some(m => 
-                    m.role === 'assistant' && m.text === closeMsg
+                    m.role === 'assistant' && 
+                    (m.text === closeMsg || 
+                     (m.text.includes('consigo te mostrar') && closeMsg.includes('consigo te mostrar')))
                 );
                 
                 if (!alreadyShown) {
@@ -550,6 +552,8 @@ function processAIResponse(response) {
                         text: closeMsg,
                         timestamp: new Date()
                     });
+                } else {
+                    console.log('Close message already shown, skipping:', closeMsg.substring(0, 50));
                 }
                 
                 // If should redirect to results, do it
@@ -588,9 +592,11 @@ function processAIResponse(response) {
             // Regular question - show after pause
             setTimeout(() => {
                 const questionMsg = response.nextQuestion.message;
-                // Check if already shown
+                // Check if already shown - improved check
                 const alreadyShown = conversationMemory.messages.some(m => 
-                    m.role === 'assistant' && m.text === questionMsg
+                    m.role === 'assistant' && 
+                    (m.text === questionMsg || 
+                     (m.text.includes(questionMsg.substring(0, 30)) && questionMsg.length > 30))
                 );
                 
                 if (!alreadyShown) {
@@ -616,6 +622,8 @@ function processAIResponse(response) {
                             input.focus();
                         }
                     }
+                } else {
+                    console.log('Question already shown, skipping:', questionMsg.substring(0, 50));
                 }
             }, 1500);
         }
