@@ -484,8 +484,14 @@ function handleConversation(userMessage) {
 let lastProcessedMessage = null; // Prevent duplicate processing
 
 function processAIResponse(response) {
+    // FIXED: Handle null response (when closing message already shown)
+    if (!response || response === null) {
+        console.log('Response is null, skipping...');
+        return;
+    }
+    
     // Prevent duplicate processing
-    const responseKey = response.acknowledgment + (response.nextQuestion?.message || '');
+    const responseKey = (response.acknowledgment || '') + (response.nextQuestion?.message || '');
     if (lastProcessedMessage === responseKey) {
         console.log('Duplicate response detected, ignoring...');
         return;
