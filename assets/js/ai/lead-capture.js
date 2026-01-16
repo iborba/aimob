@@ -880,6 +880,31 @@ function processNaturalLanguage(text, field) {
         }
     }
     
+    // Phone/WhatsApp extraction
+    if (field === 'phone' || !leadData.phone) {
+        // Match phone patterns: (51) 99999-9999, 51 999999999, 99999-9999, etc
+        const phoneMatch = text.match(/(?:\(?(\d{2})\)?\s*)?(\d{4,5}[-.\s]?\d{4,5})/);
+        if (phoneMatch) {
+            let phone = phoneMatch[0].replace(/[^\d]/g, '');
+            // If doesn't start with country code, assume it's a local number
+            if (phone.length >= 10 && phone.length <= 11) {
+                extracted.phone = phone;
+            }
+        }
+        // Also check for WhatsApp mentions
+        if (lowerText.match(/whatsapp|zap|wpp/i) && phoneMatch) {
+            extracted.phone = phoneMatch[0].replace(/[^\d]/g, '');
+        }
+    }
+    
+    // Email extraction
+    if (field === 'email' || !leadData.email) {
+        const emailMatch = text.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+        if (emailMatch) {
+            extracted.email = emailMatch[0];
+        }
+    }
+    
     // Motivation extraction
     if (field === 'motivation.story' || field === 'motivation.context') {
         if (lowerText.match(/primeiro|primeira vez|nunca tive/i)) {

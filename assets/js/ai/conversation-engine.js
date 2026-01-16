@@ -291,40 +291,65 @@ function decideNextQuestion(context) {
                           context.hasBedrooms || context.hasMotivation);
     
     if (hasEnoughInfo) {
-        // Build personalized closing message - more friendly and less direct
-        let closingMessage = "";
-        
-        // Add specific details we know
-        const details = [];
-        if (context.hasPropertyType) {
-            details.push(`um ${leadData.propertyType}`);
-        }
-        if (context.hasBedrooms) {
-            details.push(`${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`);
-        }
-        if (context.hasBudget) {
-            const budget = leadData.budget?.max || leadData.budget?.min;
-            if (budget) {
-                details.push(`até ${formatCurrency(budget)}`);
-            }
-        }
-        if (context.hasLocation) {
-            details.push(`na região de ${leadData.location}`);
-        }
-        
-        if (details.length > 0) {
-            closingMessage = `Perfeito! Entendi que você busca ${details.join(', ')}. `;
+        // Before closing, ask for contact info if not collected yet
+        // Ask for WhatsApp first, then email
+        if (!leadData.phone && !leadData.email) {
+            // Ask for WhatsApp first
+            return {
+                id: 'contact_whatsapp',
+                message: "Ah, e me diz... você gostaria de receber as melhores opções direto no seu WhatsApp? Se quiser, é só me passar o número! 😊",
+                field: 'phone',
+                type: 'text',
+                optional: true
+            };
+        } else if (!leadData.email && leadData.phone) {
+            // Already has WhatsApp, ask for email
+            return {
+                id: 'contact_email',
+                message: "E me passa seu e-mail também? Assim posso te enviar mais detalhes dos imóveis que você vai gostar! 📧",
+                field: 'email',
+                type: 'text',
+                optional: true
+            };
         } else {
-            closingMessage = "Perfeito! ";
+            // Has contact info or user declined, proceed to closing
+            let closingMessage = "";
+            
+            // Add specific details we know
+            const details = [];
+            if (context.hasPropertyType) {
+                details.push(`um ${leadData.propertyType}`);
+            }
+            if (context.hasBedrooms) {
+                details.push(`${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`);
+            }
+            if (context.hasBudget) {
+                const budget = leadData.budget?.max || leadData.budget?.min;
+                if (budget) {
+                    details.push(`até ${formatCurrency(budget)}`);
+                }
+            }
+            if (context.hasLocation) {
+                details.push(`na região de ${leadData.location}`);
+            }
+            
+            if (details.length > 0) {
+                closingMessage = `Perfeito! Entendi que você busca ${details.join(', ')}. `;
+            } else {
+                closingMessage = "Perfeito! ";
+            }
+            
+            closingMessage += "Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊";
+            
+            // Save lead before redirecting
+            saveLeadToStorage();
+            
+            return {
+                type: 'close',
+                message: closingMessage,
+                redirectToResults: true
+            };
         }
-        
-        closingMessage += "Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊";
-        
-        return {
-            type: 'close',
-            message: closingMessage,
-            redirectToResults: true
-        };
     }
     
     // Fallback: if we have some info but not enough for closing, ask for more context
@@ -768,6 +793,72 @@ function showResultsButton(searchUrl) {
 
 // Export for use
 if (typeof window !== 'undefined') {
+    // ========================================
+    // SAVE LEAD TO STORAGE
+    // ========================================
+    function saveLeadToStorage() {
+        try {
+            // Calculate lead score
+            const score = calculateLeadScore();
+            leadData.qualityScore = score;
+            leadData.timestamp = new Date().toISOString();
+            leadData.id = `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+            
+            // Get existing leads
+            const existingLeads = JSON.parse(localStorage.getItem('larprime_leads') || '[]');
+            
+            // Add new lead
+            existingLeads.push({...leadData});
+            
+            // Save back
+            localStorage.setItem('larprime_leads', JSON.stringify(existingLeads));
+            
+            // Trigger storage event for admin panel
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'larprime_leads',
+                newValue: JSON.stringify(existingLeads)
+            }));
+            
+            console.log('Lead salvo com sucesso!', leadData);
+        } catch (error) {
+            console.error('Erro ao salvar lead:', error);
+        }
+    }
+    
+    // ========================================
+    // CALCULATE LEAD SCORE
+    // ========================================
+    function calculateLeadScore() {
+        let score = 0;
+        
+        // Contact info (30 points)
+        if (leadData.phone) score += 15;
+        if (leadData.email) score += 10;
+        if (leadData.name) score += 5;
+        
+        // Property preferences (25 points)
+        if (leadData.propertyType) score += 5;
+        if (leadData.bedrooms) score += 5;
+        if (leadData.location) score += 10;
+        if (leadData.mustHaveFeatures && leadData.mustHaveFeatures.length > 0) score += 5;
+        
+        // Budget (25 points)
+        if (leadData.budget?.exact) score += 20;
+        else if (leadData.budget?.max) score += 15;
+        else if (leadData.budget?.min) score += 10;
+        
+        // Timeline (10 points)
+        if (leadData.timeline?.when) {
+            score += 5;
+            if (leadData.timeline.urgency === 'high') score += 5;
+        }
+        
+        // Motivation (10 points)
+        if (leadData.motivation?.primary) score += 10;
+        
+        return Math.min(score, 100);
+    }
+    
     window.conversationEngine = {
         handleConversation,
         analyzeContext,
@@ -776,6 +867,8 @@ if (typeof window !== 'undefined') {
         buildSearchFilters,
         showResultsButton,
         updateResultsDynamically,
+        saveLeadToStorage,
+        calculateLeadScore,
         _lastProcessedMessage: null
     };
     
@@ -784,6 +877,7 @@ if (typeof window !== 'undefined') {
     window.buildSearchFilters = buildSearchFilters;
     window.showResultsButton = showResultsButton;
     window.updateResultsDynamically = updateResultsDynamically;
+    window.saveLeadToStorage = saveLeadToStorage;
     
     // Update lastProcessedMessage reference
     Object.defineProperty(window.conversationEngine, '_lastProcessedMessage', {
