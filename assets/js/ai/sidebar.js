@@ -347,6 +347,7 @@ function handleSidebarInput(state, savedData) {
         state.currentQuestion = null;
         
         // Ask next question in sequence - PRIORIDADE: IMÓVEL primeiro, CLIENTE depois
+        // FIXED: Nome e Contato são OBRIGATÓRIOS e devem ser sempre perguntados
         setTimeout(() => {
             // 1. LOCALIZAÇÃO (se não foi perguntado ainda)
             if (!state.questionsAsked.has('location') && !savedData.location) {
@@ -360,9 +361,16 @@ function handleSidebarInput(state, savedData) {
             else if (!state.questionsAsked.has('bedrooms_refine') && !savedData.bedrooms) {
                 askRefinementQuestion('bedrooms_refine', state, savedData);
             }
-            // 4. Nome (se ainda não foi coletado)
-            else if (!state.questionsAsked.has('name') && !savedData.name) {
-                askRefinementQuestion('name', state, savedData);
+            // 4. NOME (OBRIGATÓRIO - sempre perguntar se não foi coletado)
+            else if (!state.questionsAsked.has('name')) {
+                const currentLead = getOrCreateLeadData();
+                if (!currentLead.name || currentLead.name === 'Não informado' || currentLead.name.trim() === '') {
+                    askRefinementQuestion('name', state, savedData);
+                } else {
+                    // Já tem nome, pular para próxima
+                    state.questionsAsked.add('name');
+                    handleSidebarInput(state, savedData); // Recursivo para próxima pergunta
+                }
             }
             // 5. Motivação (importante para entender o lead)
             else if (!state.questionsAsked.has('motivation')) {
@@ -375,13 +383,15 @@ function handleSidebarInput(state, savedData) {
                 askRefinementQuestion('payment', state, savedData);
             } else if (!state.questionsAsked.has('current_situation')) {
                 askRefinementQuestion('current_situation', state, savedData);
-            } else if (!state.questionsAsked.has('contact')) {
-                // Por último, pedir contato (telefone ou email) - mas só se ainda não tiver
+            } 
+            // 7. CONTATO (OBRIGATÓRIO - sempre perguntar se não foi coletado)
+            else if (!state.questionsAsked.has('contact')) {
                 const currentLead = getOrCreateLeadData();
                 if (!currentLead.phone && !currentLead.email) {
                     askRefinementQuestion('contact', state, savedData);
                 } else {
-                    // Já tem contato, oferecer novos filtros
+                    // Já tem contato, marcar como perguntado e finalizar
+                    state.questionsAsked.add('contact');
                     addLunaSidebarMessage("Perfeito! Com essas informações, consigo te ajudar ainda melhor. Os resultados já estão filtrados pra você! 😊");
                     addLunaSidebarMessage("Se quiser refinar mais alguma coisa ou mudar algum filtro, é só me falar! Estou sempre aqui pra ajudar! ✨");
                 }
