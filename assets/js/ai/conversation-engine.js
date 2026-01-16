@@ -348,36 +348,63 @@ function decideNextQuestion(context) {
     const hasEnoughInfo = (context.hasPropertyType || context.hasBudget || context.hasLocation || 
                           context.hasBedrooms || context.hasMotivation);
     
+    // NEW: Check if we should show confirmation summary first
+    const shouldShowConfirmation = hasEnoughInfo && 
+                                   conversationMemory.messages.filter(m => m.role === 'user').length === 1 &&
+                                   typeof window.generateStructuredSummary === 'function';
+    
+    if (shouldShowConfirmation) {
+        // Show structured summary and ask for confirmation
+        const summary = window.generateStructuredSummary(conversationMemory.extractedData);
+        
+        return {
+            id: 'confirmation_summary',
+            message: summary,
+            field: 'confirmation',
+            type: 'confirmation',
+            optional: false,
+            requiresConfirmation: true
+        };
+    }
+    
     if (hasEnoughInfo) {
         // Proceed directly to closing - NO contact info questions here
         // Contact will be asked in sidebar after results are shown
         let closingMessage = "";
         
-        // Add specific details we know
-        const details = [];
-        if (context.hasPropertyType) {
-            details.push(`um ${leadData.propertyType}`);
-        }
-        if (context.hasBedrooms) {
-            details.push(`${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`);
-        }
-        if (context.hasBudget) {
-            const budget = leadData.budget?.max || leadData.budget?.min;
-            if (budget) {
-                details.push(`até ${formatCurrency(budget)}`);
-            }
-        }
-        if (context.hasLocation) {
-            details.push(`na região de ${leadData.location}`);
-        }
-        
-        if (details.length > 0) {
-            closingMessage = `Perfeito! Entendi que você busca ${details.join(', ')}. `;
+        // NEW: Use structured summary if available and not already shown
+        if (typeof window.generateStructuredSummary === 'function' && 
+            !conversationMemory.confirmationShown) {
+            closingMessage = window.generateStructuredSummary(conversationMemory.extractedData);
+            closingMessage += "\n\nPerfeito! Vou buscar os melhores imóveis pra você! 🔍";
+            conversationMemory.confirmationShown = true;
         } else {
-            closingMessage = "Perfeito! ";
+            // Fallback to simple message
+            const details = [];
+            if (context.hasPropertyType) {
+                details.push(`um ${leadData.propertyType}`);
+            }
+            if (context.hasBedrooms) {
+                details.push(`${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`);
+            }
+            if (context.hasBudget) {
+                const budget = leadData.budget?.max || leadData.budget?.min;
+                if (budget) {
+                    details.push(`até ${formatCurrency(budget)}`);
+                }
+            }
+            if (context.hasLocation) {
+                details.push(`na região de ${leadData.location}`);
+            }
+            
+            if (details.length > 0) {
+                closingMessage = `Perfeito! Entendi que você busca ${details.join(', ')}. `;
+            } else {
+                closingMessage = "Perfeito! ";
+            }
+            
+            closingMessage += "Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊";
         }
-        
-        closingMessage += "Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊";
         
         // Save lead with current filters as metadata before redirecting
         const filters = buildSearchFilters();
