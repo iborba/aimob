@@ -388,9 +388,10 @@ function handleSidebarInput(state, savedData) {
                 if (!currentLead.name || currentLead.name === 'Não informado' || currentLead.name.trim() === '') {
                     askRefinementQuestion('name', state, savedData);
                 } else {
-                    // Já tem nome, pular para próxima
+                    // Já tem nome válido, marcar como perguntado e continuar
                     state.questionsAsked.add('name');
-                    handleSidebarInput(state, savedData); // Recursivo para próxima pergunta
+                    // Continue to next question without recursive call
+                    // The setTimeout will handle the next iteration
                 }
             }
             // 5. Motivação (importante para entender o lead)
