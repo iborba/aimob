@@ -660,8 +660,10 @@ function createPropertyCardForResults(imovel) {
     
     card.innerHTML = `
         <div class="property-image">
-            <img src="${imovel.imagem}" alt="${imovel.titulo}" loading="lazy">
-            <button class="property-favorite" aria-label="Favoritar">
+            <a href="pages/imovel-detalhe.html?id=${imovel.id}" class="property-image-link">
+                <img src="${imovel.imagem}" alt="${imovel.titulo}" loading="lazy">
+            </a>
+            <button class="property-favorite" aria-label="Favoritar" onclick="event.stopPropagation(); event.preventDefault();">
                 <i class="far fa-heart"></i>
             </button>
             <div class="property-price">${new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(imovel.preco)}</div>

@@ -295,10 +295,12 @@ function createPropertyCard(imovel) {
     
     card.innerHTML = `
         <div class="property-image">
-            <img src="${imovel.imagem}" alt="${imovel.titulo}" loading="lazy">
+            <a href="imovel-detalhe.html?id=${imovel.id}" class="property-image-link">
+                <img src="${imovel.imagem}" alt="${imovel.titulo}" loading="lazy">
+            </a>
             ${imovel.preco > 1500000 ? '<span class="badge badge-premium">Premium</span>' : ''}
             ${imovel.preco < 300000 ? '<span class="badge badge-new">Oportunidade</span>' : ''}
-            <button class="property-favorite" aria-label="Favoritar">
+            <button class="property-favorite" aria-label="Favoritar" onclick="event.stopPropagation(); event.preventDefault();">
                 <i class="far fa-heart"></i>
             </button>
             <div class="property-price">${formatCurrency(imovel.preco)}</div>

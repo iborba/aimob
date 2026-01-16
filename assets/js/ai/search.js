@@ -494,12 +494,14 @@ function createAIPropertyCard(property) {
     return `
         <article class="property-card property-card-ai" style="opacity: 0; transform: translateY(20px); transition: all 0.4s ease;">
             <div class="property-image">
-                <img src="${property.image}" alt="${property.title}">
+                <a href="pages/imovel-detalhe.html?id=${property.id}" class="property-image-link">
+                    <img src="${property.image}" alt="${property.title}">
+                </a>
                 <div class="ai-match-score ${scoreColor}">
                     <i class="fas fa-chart-line"></i>
                     <span>${property.matchScore}% match</span>
                 </div>
-                <button class="property-favorite" aria-label="Favoritar">
+                <button class="property-favorite" aria-label="Favoritar" onclick="event.stopPropagation(); event.preventDefault();">
                     <i class="far fa-heart"></i>
                 </button>
                 <div class="property-price">${priceFormatted}</div>
