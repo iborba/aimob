@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imóveis à Venda e Aluguel | Lar Prime</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="imoveis.html" class="active">Imóveis</a></li>
+                <li><a href="sobre.html">Sobre Nós</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="tel:+5511999999999" class="nav-phone">
+                    <i class="fas fa-phone"></i>
+                    <span>(11) 99999-9999</span>
+                </a>
+                <a href="contato.html" class="btn btn-primary">Fale Conosco</a>
+            </div>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Encontre seu <span class="text-gradient">Imóvel Ideal</span></h1>
+            <p>Explore nossa seleção de imóveis exclusivos em São Paulo e região</p>
+        </div>
+    </header>
+
+    <!-- Properties Listing -->
+    <section class="section">
+        <div class="container">
+            <!-- Filters -->
+            <div class="filters-bar">
+                <div class="filter-group">
+                    <label>Tipo:</label>
+                    <select>
+                        <option>Todos</option>
+                        <option>Apartamento</option>
+                        <option>Casa</option>
+                        <option>Cobertura</option>
+                        <option>Terreno</option>
+                        <option>Comercial</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Quartos:</label>
+                    <select>
+                        <option>Qualquer</option>
+                        <option>1+</option>
+                        <option>2+</option>
+                        <option>3+</option>
+                        <option>4+</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Preço:</label>
+                    <select>
+                        <option>Qualquer valor</option>
+                        <option>Até R$ 300.000</option>
+                        <option>R$ 300.000 - R$ 500.000</option>
+                        <option>R$ 500.000 - R$ 800.000</option>
+                        <option>R$ 800.000 - R$ 1.500.000</option>
+                        <option>Acima de R$ 1.500.000</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Ordenar:</label>
+                    <select>
+                        <option>Mais recentes</option>
+                        <option>Menor preço</option>
+                        <option>Maior preço</option>
+                        <option>Maior área</option>
+                    </select>
+                </div>
+                <span class="results-count">Exibindo <strong>24</strong> imóveis</span>
+            </div>
+
+            <!-- Properties Grid -->
+            <div class="properties-grid">
+                <!-- Property Card 1 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="Casa moderna com piscina">
+                        <div class="property-badges">
+                            <span class="badge badge-featured">Destaque</span>
+                            <span class="badge badge-new">Novo</span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 1.250.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Jardins, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Casa Moderna com Piscina</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>4 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>3 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>2 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>280 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 2 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop" alt="Apartamento de luxo">
+                        <div class="property-badges">
+                            <span class="badge badge-featured">Destaque</span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 890.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Vila Olímpia, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Apartamento Alto Padrão</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>3 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>2 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>2 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>145 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 3 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop" alt="Cobertura duplex">
+                        <div class="property-badges">
+                            <span class="badge badge-premium">Premium</span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 2.400.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Itaim Bibi, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Cobertura Duplex Vista Panorâmica</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>4 Suítes</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>5 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>4 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>380 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 4 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop" alt="Casa em condomínio">
+                        <div class="property-badges">
+                            <span class="badge badge-new">Novo</span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 1.850.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Alphaville, Barueri - SP</span>
+                        </div>
+                        <h3 class="property-title">Casa em Condomínio Fechado</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>5 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>4 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>3 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>420 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 5 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop" alt="Studio moderno">
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 420.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Pinheiros, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Studio Moderno Mobiliado</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>1 Quarto</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>1 Banheiro</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>1 Vaga</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>38 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 6 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=800&h=600&fit=crop" alt="Apartamento garden">
+                        <div class="property-badges">
+                            <span class="badge badge-featured">Destaque</span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 680.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Moema, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Apartamento Garden com Quintal</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>2 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>2 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>1 Vaga</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>95 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 7 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop" alt="Casa térrea">
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 950.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Morumbi, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Casa Térrea com Jardim</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>3 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>2 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>2 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>180 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 8 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop" alt="Mansão luxuosa">
+                        <div class="property-badges">
+                            <span class="badge badge-premium">Premium</span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 4.500.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Cidade Jardim, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Mansão Contemporânea</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>6 Suítes</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>8 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>6 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>850 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 9 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1560185893-a55cbc8c57e8?w=800&h=600&fit=crop" alt="Loft industrial">
+                        <div class="property-badges">
+                            <span class="badge badge-new">Novo</span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 720.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Vila Madalena, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Loft Industrial Reformado</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>1 Quarto</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>2 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>1 Vaga</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>110 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Pagination -->
+            <div class="section-cta" style="display: flex; justify-content: center; gap: 8px; margin-top: 48px;">
+                <button class="btn btn-outline" style="padding: 12px 20px;">← Anterior</button>
+                <button class="btn btn-primary" style="padding: 12px 20px;">1</button>
+                <button class="btn btn-outline" style="padding: 12px 20px;">2</button>
+                <button class="btn btn-outline" style="padding: 12px 20px;">3</button>
+                <button class="btn btn-outline" style="padding: 12px 20px;">Próximo →</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-bg"></div>
+        <div class="container cta-content">
+            <h2>Não encontrou o que procura?</h2>
+            <p>Conte-nos o que você precisa e nossa equipe irá buscar o imóvel ideal para você.</p>
+            <div class="cta-buttons">
+                <a href="contato.html" class="btn btn-primary btn-lg">
+                    <i class="fas fa-search"></i>
+                    Solicitar Busca Personalizada
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon">◆</span>
+                        <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
+                    </a>
+                    <p>Transformando sonhos em endereços desde 2010. Sua imobiliária de confiança em São Paulo.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="imoveis.html">Imóveis à Venda</a></li>
+                        <li><a href="imoveis.html">Imóveis para Alugar</a></li>
+                        <li><a href="sobre.html">Sobre Nós</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Regiões</h4>
+                    <ul>
+                        <li><a href="#">Zona Sul</a></li>
+                        <li><a href="#">Zona Oeste</a></li>
+                        <li><a href="#">Centro</a></li>
+                        <li><a href="#">Alphaville</a></li>
+                        <li><a href="#">Litoral</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contato</h4>
+                    <ul>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Av. Paulista, 1000 - 10º andar<br>São Paulo - SP</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:+5511999999999">(11) 99999-9999</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:contato@larprime.com.br">contato@larprime.com.br</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Lar Prime Imobiliária. Todos os direitos reservados.</p>
+                <p>CRECI: 12345-J | CNPJ: 00.000.000/0001-00</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/5511999999999" class="whatsapp-float" aria-label="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span>Fale Conosco</span>
+    </a>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

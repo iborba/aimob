@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contato | Lar Prime Imobiliária</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="imoveis.html">Imóveis</a></li>
+                <li><a href="sobre.html">Sobre Nós</a></li>
+                <li><a href="contato.html" class="active">Contato</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="tel:+5511999999999" class="nav-phone">
+                    <i class="fas fa-phone"></i>
+                    <span>(11) 99999-9999</span>
+                </a>
+                <a href="contato.html" class="btn btn-primary">Fale Conosco</a>
+            </div>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <header class="page-header">
+        <div class="container">
+            <h1>Entre em <span class="text-gradient">Contato</span></h1>
+            <p>Estamos prontos para ajudá-lo a encontrar o imóvel dos seus sonhos</p>
+        </div>
+    </header>
+
+    <!-- Contact Section -->
+    <section class="section">
+        <div class="container">
+            <div class="contact-grid">
+                <!-- Contact Info -->
+                <div class="contact-info">
+                    <h3>Informações de <span class="text-gradient">Contato</span></h3>
+                    
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Endereço</h4>
+                            <p>Av. Paulista, 1000 - 10º andar<br>Bela Vista, São Paulo - SP<br>CEP: 01310-100</p>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="fas fa-phone"></i>
+                        <div>
+                            <h4>Telefone</h4>
+                            <a href="tel:+5511999999999">(11) 99999-9999</a><br>
+                            <a href="tel:+551132222222">(11) 3222-2222</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>E-mail</h4>
+                            <a href="mailto:contato@larprime.com.br">contato@larprime.com.br</a><br>
+                            <a href="mailto:vendas@larprime.com.br">vendas@larprime.com.br</a>
+                        </div>
+                    </div>
+
+                    <div class="contact-item">
+                        <i class="fas fa-clock"></i>
+                        <div>
+                            <h4>Horário de Atendimento</h4>
+                            <p>Segunda a Sexta: 9h às 18h<br>Sábado: 9h às 13h<br>Domingo: Fechado</p>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,0.1);">
+                        <h4 style="margin-bottom: 16px;">Siga-nos nas redes</h4>
+                        <div class="footer-social">
+                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                            <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Form -->
+                <div class="contact-form">
+                    <h3>Envie sua <span class="text-gradient">Mensagem</span></h3>
+                    <form action="#" method="POST">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="name">Nome Completo *</label>
+                                <input type="text" id="name" name="name" placeholder="Seu nome completo" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="email">E-mail *</label>
+                                <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="phone">Telefone *</label>
+                                <input type="tel" id="phone" name="phone" placeholder="(11) 99999-9999" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="subject">Assunto</label>
+                                <select id="subject" name="subject">
+                                    <option value="">Selecione um assunto</option>
+                                    <option value="comprar">Quero Comprar um Imóvel</option>
+                                    <option value="vender">Quero Vender meu Imóvel</option>
+                                    <option value="alugar">Quero Alugar um Imóvel</option>
+                                    <option value="avaliar">Avaliar meu Imóvel</option>
+                                    <option value="financiamento">Simulação de Financiamento</option>
+                                    <option value="outro">Outro Assunto</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="property-type">Tipo de Imóvel de Interesse</label>
+                                <select id="property-type" name="property-type">
+                                    <option value="">Selecione o tipo</option>
+                                    <option value="apartamento">Apartamento</option>
+                                    <option value="casa">Casa</option>
+                                    <option value="cobertura">Cobertura</option>
+                                    <option value="terreno">Terreno</option>
+                                    <option value="comercial">Comercial</option>
+                                    <option value="outro">Outro</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group full-width">
+                                <label for="message">Mensagem *</label>
+                                <textarea id="message" name="message" placeholder="Conte-nos mais sobre o que você procura..." required></textarea>
+                            </div>
+
+                            <div class="form-group full-width" style="display: flex; align-items: flex-start; gap: 12px;">
+                                <input type="checkbox" id="privacy" name="privacy" style="width: auto; margin-top: 4px;" required>
+                                <label for="privacy" style="font-size: 0.85rem; color: var(--color-text-secondary); cursor: pointer;">
+                                    Li e concordo com a <a href="#" style="color: var(--color-primary);">Política de Privacidade</a> e autorizo o contato da Lar Prime.
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-submit">
+                            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+                                <i class="fas fa-paper-plane"></i>
+                                Enviar Mensagem
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Quick Contact Options -->
+    <section class="section" style="background: var(--color-bg-medium); padding: 48px 0;">
+        <div class="container">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;">
+                <a href="https://wa.me/5511999999999" class="benefit-card" style="text-align: center; text-decoration: none;">
+                    <div class="benefit-icon" style="margin: 0 auto 16px; background: rgba(37, 211, 102, 0.2);">
+                        <i class="fab fa-whatsapp" style="color: #25d366;"></i>
+                    </div>
+                    <h3>WhatsApp</h3>
+                    <p>Atendimento rápido e prático pelo WhatsApp. Resposta em até 5 minutos!</p>
+                    <span style="color: var(--color-primary); font-weight: 600; margin-top: 12px; display: inline-block;">Iniciar Conversa →</span>
+                </a>
+
+                <a href="tel:+5511999999999" class="benefit-card" style="text-align: center; text-decoration: none;">
+                    <div class="benefit-icon" style="margin: 0 auto 16px;">
+                        <i class="fas fa-phone"></i>
+                    </div>
+                    <h3>Ligue Agora</h3>
+                    <p>Prefere falar por telefone? Nossa equipe está pronta para atendê-lo.</p>
+                    <span style="color: var(--color-primary); font-weight: 600; margin-top: 12px; display: inline-block;">(11) 99999-9999</span>
+                </a>
+
+                <a href="mailto:contato@larprime.com.br" class="benefit-card" style="text-align: center; text-decoration: none;">
+                    <div class="benefit-icon" style="margin: 0 auto 16px;">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <h3>E-mail</h3>
+                    <p>Envie-nos um e-mail detalhado e responderemos em até 24 horas úteis.</p>
+                    <span style="color: var(--color-primary); font-weight: 600; margin-top: 12px; display: inline-block;">Enviar E-mail →</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section -->
+    <section class="section" style="padding: 0;">
+        <div style="position: relative; width: 100%; height: 450px; background: var(--color-bg-card);">
+            <iframe 
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1976040927975!2d-46.65659468502226!3d-23.56517998468096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sAv.%20Paulista%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1640000000000!5m2!1spt-BR!2sbr" 
+                width="100%" 
+                height="100%" 
+                style="border:0; filter: grayscale(100%) invert(92%) contrast(83%);" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+            </iframe>
+            <div style="position: absolute; bottom: 24px; left: 24px; background: var(--color-bg-card); padding: 20px 24px; border-radius: 12px; box-shadow: var(--shadow-lg);">
+                <h4 style="margin-bottom: 8px;">Lar Prime Imobiliária</h4>
+                <p style="color: var(--color-text-secondary); font-size: 0.9rem;">Av. Paulista, 1000 - 10º andar</p>
+                <a href="https://goo.gl/maps/..." target="_blank" style="color: var(--color-primary); font-size: 0.9rem; display: inline-flex; align-items: center; gap: 4px; margin-top: 8px;">
+                    <i class="fas fa-directions"></i> Ver Rotas
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Dúvidas Frequentes</span>
+                <h2 class="section-title">Perguntas <span class="text-gradient">Frequentes</span></h2>
+            </div>
+
+            <div style="max-width: 800px; margin: 0 auto;">
+                <div class="benefit-card" style="margin-bottom: 16px;">
+                    <h3 style="display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-question-circle" style="color: var(--color-primary);"></i>
+                        Qual a documentação necessária para comprar um imóvel?
+                    </h3>
+                    <p style="margin-top: 12px;">Para comprar um imóvel você precisará de: RG, CPF, comprovante de estado civil, comprovante de renda, comprovante de residência e declaração de imposto de renda (se aplicável). Nossa equipe jurídica orienta você em todo o processo.</p>
+                </div>
+
+                <div class="benefit-card" style="margin-bottom: 16px;">
+                    <h3 style="display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-question-circle" style="color: var(--color-primary);"></i>
+                        Vocês auxiliam com financiamento imobiliário?
+                    </h3>
+                    <p style="margin-top: 12px;">Sim! Temos parcerias com os principais bancos do mercado e oferecemos simulação de financiamento gratuita. Nossos consultores ajudam você a encontrar as melhores taxas e condições disponíveis.</p>
+                </div>
+
+                <div class="benefit-card" style="margin-bottom: 16px;">
+                    <h3 style="display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-question-circle" style="color: var(--color-primary);"></i>
+                        Quanto tempo leva para fechar uma compra?
+                    </h3>
+                    <p style="margin-top: 12px;">O tempo médio varia de 30 a 60 dias, dependendo da complexidade da documentação e do tipo de pagamento (à vista ou financiado). Trabalhamos para agilizar ao máximo o processo.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <h3 style="display: flex; align-items: center; gap: 12px;">
+                        <i class="fas fa-question-circle" style="color: var(--color-primary);"></i>
+                        Posso agendar uma visita ao imóvel?
+                    </h3>
+                    <p style="margin-top: 12px;">Claro! Entre em contato pelo WhatsApp, telefone ou formulário acima e agendaremos uma visita no horário mais conveniente para você. Também oferecemos tours virtuais 360° para sua comodidade.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon">◆</span>
+                        <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
+                    </a>
+                    <p>Transformando sonhos em endereços desde 2010. Sua imobiliária de confiança em São Paulo.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="imoveis.html">Imóveis à Venda</a></li>
+                        <li><a href="imoveis.html">Imóveis para Alugar</a></li>
+                        <li><a href="sobre.html">Sobre Nós</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Regiões</h4>
+                    <ul>
+                        <li><a href="#">Zona Sul</a></li>
+                        <li><a href="#">Zona Oeste</a></li>
+                        <li><a href="#">Centro</a></li>
+                        <li><a href="#">Alphaville</a></li>
+                        <li><a href="#">Litoral</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contato</h4>
+                    <ul>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Av. Paulista, 1000 - 10º andar<br>São Paulo - SP</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:+5511999999999">(11) 99999-9999</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:contato@larprime.com.br">contato@larprime.com.br</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Lar Prime Imobiliária. Todos os direitos reservados.</p>
+                <p>CRECI: 12345-J | CNPJ: 00.000.000/0001-00</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/5511999999999" class="whatsapp-float" aria-label="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span>Fale Conosco</span>
+    </a>
+
+    <script src="script.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Moderna com Piscina | Lar Prime</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Início</a></li>
+                <li><a href="imoveis.html" class="active">Imóveis</a></li>
+                <li><a href="sobre.html">Sobre Nós</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="tel:+5511999999999" class="nav-phone">
+                    <i class="fas fa-phone"></i>
+                    <span>(11) 99999-9999</span>
+                </a>
+                <a href="contato.html" class="btn btn-primary">Fale Conosco</a>
+            </div>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Property Detail Header -->
+    <section class="property-detail-header">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div style="margin-bottom: 24px; font-size: 0.9rem; color: var(--color-text-muted);">
+                <a href="index.html" style="color: var(--color-text-secondary);">Início</a>
+                <span style="margin: 0 8px;">›</span>
+                <a href="imoveis.html" style="color: var(--color-text-secondary);">Imóveis</a>
+                <span style="margin: 0 8px;">›</span>
+                <span style="color: var(--color-primary);">Casa Moderna com Piscina</span>
+            </div>
+
+            <!-- Gallery -->
+            <div class="property-gallery">
+                <div class="gallery-main">
+                    <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1200&h=800&fit=crop" alt="Casa moderna com piscina - Principal" id="main-image">
+                </div>
+                <div class="gallery-thumbs">
+                    <div class="gallery-thumb">
+                        <img src="https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=400&h=300&fit=crop" alt="Vista da sala">
+                    </div>
+                    <div class="gallery-thumb">
+                        <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=400&h=300&fit=crop" alt="Quarto principal">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div style="display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;">
+                <button class="btn btn-outline" style="padding: 10px 20px;">
+                    <i class="far fa-heart"></i> Favoritar
+                </button>
+                <button class="btn btn-outline" style="padding: 10px 20px;">
+                    <i class="fas fa-share-alt"></i> Compartilhar
+                </button>
+                <button class="btn btn-outline" style="padding: 10px 20px;">
+                    <i class="fas fa-print"></i> Imprimir
+                </button>
+                <button class="btn btn-outline" style="padding: 10px 20px;">
+                    <i class="fas fa-street-view"></i> Tour Virtual
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Property Content -->
+    <section class="section" style="padding-top: 48px;">
+        <div class="container">
+            <div class="property-detail-content">
+                <!-- Main Content -->
+                <div class="property-main">
+                    <div class="property-badges" style="position: static; margin-bottom: 16px;">
+                        <span class="badge badge-featured">Destaque</span>
+                        <span class="badge badge-new">Novo</span>
+                    </div>
+                    
+                    <h1>Casa Moderna com Piscina</h1>
+                    <div class="property-main-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>Jardins, São Paulo - SP</span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="property-description">
+                        <h2>Descrição do Imóvel</h2>
+                        <p>Magnífica casa contemporânea localizada em um dos bairros mais nobres de São Paulo. Este imóvel exclusivo combina design arrojado com funcionalidade, oferecendo o máximo em conforto e sofisticação.</p>
+                        <br>
+                        <p>A residência conta com amplos ambientes integrados, pé-direito duplo na sala de estar, cozinha gourmet totalmente equipada e uma área de lazer completa com piscina aquecida, churrasqueira e espaço gourmet.</p>
+                        <br>
+                        <p>Os quatro quartos são suítes, sendo a master com closet e banheira de hidromassagem. Acabamentos de alto padrão em toda a casa, incluindo piso de mármore, esquadrias de alumínio com vidro temperado e automação residencial completa.</p>
+                        <br>
+                        <p>Localização privilegiada, próximo a restaurantes, shoppings, escolas internacionais e fácil acesso às principais vias da cidade.</p>
+                    </div>
+
+                    <!-- Features -->
+                    <div class="property-features-detail">
+                        <h2>Características</h2>
+                        <div class="features-grid">
+                            <div class="feature-item">
+                                <i class="fas fa-bed"></i>
+                                <span>4 Quartos (4 suítes)</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-bath"></i>
+                                <span>5 Banheiros</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-car"></i>
+                                <span>4 Vagas de Garagem</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>280 m² Área Construída</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-expand-arrows-alt"></i>
+                                <span>450 m² Área Total</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-calendar-alt"></i>
+                                <span>Construído em 2022</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Amenities -->
+                    <div class="property-features-detail" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px;">
+                        <h2>Comodidades</h2>
+                        <div class="features-grid">
+                            <div class="feature-item">
+                                <i class="fas fa-swimming-pool"></i>
+                                <span>Piscina Aquecida</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-utensils"></i>
+                                <span>Espaço Gourmet</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-fire"></i>
+                                <span>Churrasqueira</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-home"></i>
+                                <span>Automação Residencial</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-snowflake"></i>
+                                <span>Ar Condicionado Central</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-video"></i>
+                                <span>Câmeras de Segurança</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-sun"></i>
+                                <span>Energia Solar</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-tint"></i>
+                                <span>Cisterna</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-seedling"></i>
+                                <span>Jardim Paisagístico</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-door-closed"></i>
+                                <span>Closet</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-hot-tub"></i>
+                                <span>Hidromassagem</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fas fa-couch"></i>
+                                <span>Varanda Gourmet</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Location -->
+                    <div class="property-features-detail" style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px;">
+                        <h2>Localização</h2>
+                        <div style="margin-bottom: 20px;">
+                            <p style="color: var(--color-text-secondary); margin-bottom: 16px;">
+                                <i class="fas fa-map-marker-alt" style="color: var(--color-primary); margin-right: 8px;"></i>
+                                Rua dos Jardins, 500 - Jardins, São Paulo - SP
+                            </p>
+                        </div>
+                        
+                        <div style="background: var(--color-bg-medium); border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                            <h4 style="margin-bottom: 16px;">Proximidades</h4>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                                <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                    <i class="fas fa-shopping-bag" style="color: var(--color-primary); width: 20px;"></i>
+                                    Shopping Iguatemi - 800m
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                    <i class="fas fa-graduation-cap" style="color: var(--color-primary); width: 20px;"></i>
+                                    Colégio Dante - 1.2km
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                    <i class="fas fa-hospital" style="color: var(--color-primary); width: 20px;"></i>
+                                    Hospital Sírio-Libanês - 2km
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                    <i class="fas fa-subway" style="color: var(--color-primary); width: 20px;"></i>
+                                    Metrô Consolação - 1.5km
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                    <i class="fas fa-tree" style="color: var(--color-primary); width: 20px;"></i>
+                                    Parque Ibirapuera - 3km
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 8px; color: var(--color-text-secondary); font-size: 0.9rem;">
+                                    <i class="fas fa-utensils" style="color: var(--color-primary); width: 20px;"></i>
+                                    Restaurantes - 200m
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="border-radius: 12px; overflow: hidden; height: 300px;">
+                            <iframe 
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1976040927975!2d-46.65659468502226!3d-23.56517998468096!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x94ce59c8da0aa315%3A0xd59f9431f2c9776a!2sJardins%2C%20S%C3%A3o%20Paulo%20-%20SP!5e0!3m2!1spt-BR!2sbr!4v1640000000000!5m2!1spt-BR!2sbr" 
+                                width="100%" 
+                                height="100%" 
+                                style="border:0; filter: grayscale(100%) invert(92%) contrast(83%);" 
+                                allowfullscreen="" 
+                                loading="lazy">
+                            </iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sidebar -->
+                <div class="property-sidebar">
+                    <!-- Price Card -->
+                    <div class="sidebar-card">
+                        <div class="sidebar-price">
+                            R$ 1.250.000
+                            <small>à vista</small>
+                        </div>
+                        <p style="color: var(--color-text-secondary); font-size: 0.9rem; margin-bottom: 16px;">
+                            ou R$ 7.500/mês (financiamento em 360x)*
+                        </p>
+
+                        <div class="sidebar-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>4 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>5 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>4 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>280 m²</span>
+                            </div>
+                        </div>
+
+                        <div class="sidebar-cta">
+                            <a href="https://wa.me/5511999999999?text=Olá! Tenho interesse no imóvel: Casa Moderna com Piscina - Jardins" class="btn btn-whatsapp-lg" style="width: 100%;">
+                                <i class="fab fa-whatsapp"></i>
+                                Falar no WhatsApp
+                            </a>
+                            <a href="tel:+5511999999999" class="btn btn-primary" style="width: 100%;">
+                                <i class="fas fa-phone"></i>
+                                Ligar Agora
+                            </a>
+                            <button class="btn btn-outline" style="width: 100%;">
+                                <i class="fas fa-calendar-alt"></i>
+                                Agendar Visita
+                            </button>
+                        </div>
+
+                        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 16px; text-align: center;">
+                            * Valores sujeitos à aprovação de crédito
+                        </p>
+                    </div>
+
+                    <!-- Broker Card -->
+                    <div class="broker-card">
+                        <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=face" alt="Fernando Alves">
+                        <h4>Fernando Alves</h4>
+                        <span>Consultor Imobiliário</span>
+                        <p style="color: var(--color-text-secondary); font-size: 0.85rem; margin-top: 12px;">CRECI: 123456-F</p>
+                        <div style="display: flex; gap: 12px; margin-top: 16px; justify-content: center;">
+                            <a href="https://wa.me/5511999999999" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-whatsapp); color: white; border-radius: 8px;">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                            <a href="tel:+5511999999999" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-primary); color: var(--color-bg-dark); border-radius: 8px;">
+                                <i class="fas fa-phone"></i>
+                            </a>
+                            <a href="mailto:fernando@larprime.com.br" style="width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: var(--color-bg-medium); color: var(--color-text-primary); border-radius: 8px;">
+                                <i class="fas fa-envelope"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Financing Calculator -->
+                    <div class="sidebar-card">
+                        <h4 style="margin-bottom: 16px;">
+                            <i class="fas fa-calculator" style="color: var(--color-primary); margin-right: 8px;"></i>
+                            Simule seu Financiamento
+                        </h4>
+                        <div style="display: flex; flex-direction: column; gap: 12px;">
+                            <div>
+                                <label style="font-size: 0.85rem; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Entrada (20%)</label>
+                                <input type="text" value="R$ 250.000" style="width: 100%; padding: 10px; background: var(--color-bg-medium); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--color-text-primary);" readonly>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.85rem; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Valor Financiado</label>
+                                <input type="text" value="R$ 1.000.000" style="width: 100%; padding: 10px; background: var(--color-bg-medium); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--color-text-primary);" readonly>
+                            </div>
+                            <div>
+                                <label style="font-size: 0.85rem; color: var(--color-text-muted); display: block; margin-bottom: 4px;">Parcela Estimada (360x)</label>
+                                <input type="text" value="R$ 7.500/mês" style="width: 100%; padding: 10px; background: var(--color-bg-medium); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: var(--color-primary); font-weight: 600;" readonly>
+                            </div>
+                        </div>
+                        <a href="contato.html" class="btn btn-outline" style="width: 100%; margin-top: 16px;">
+                            Solicitar Simulação Completa
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Similar Properties -->
+    <section class="section properties-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Você também pode gostar</span>
+                <h2 class="section-title">Imóveis <span class="text-gradient">Similares</span></h2>
+            </div>
+
+            <div class="properties-grid" style="grid-template-columns: repeat(3, 1fr);">
+                <!-- Property Card 1 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&h=600&fit=crop" alt="Casa em condomínio">
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 1.850.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Alphaville, Barueri - SP</span>
+                        </div>
+                        <h3 class="property-title">Casa em Condomínio Fechado</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>5 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>4 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>3 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>420 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 2 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&h=600&fit=crop" alt="Casa térrea">
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 950.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Morumbi, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Casa Térrea com Jardim</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>3 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>2 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>2 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>180 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 3 -->
+                <article class="property-card">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800&h=600&fit=crop" alt="Mansão luxuosa">
+                        <div class="property-badges">
+                            <span class="badge badge-premium">Premium</span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 4.500.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Cidade Jardim, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Mansão Contemporânea</h3>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>6 Suítes</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>8 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>6 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>850 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon">◆</span>
+                        <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
+                    </a>
+                    <p>Transformando sonhos em endereços desde 2010. Sua imobiliária de confiança em São Paulo.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="imoveis.html">Imóveis à Venda</a></li>
+                        <li><a href="imoveis.html">Imóveis para Alugar</a></li>
+                        <li><a href="sobre.html">Sobre Nós</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Regiões</h4>
+                    <ul>
+                        <li><a href="#">Zona Sul</a></li>
+                        <li><a href="#">Zona Oeste</a></li>
+                        <li><a href="#">Centro</a></li>
+                        <li><a href="#">Alphaville</a></li>
+                        <li><a href="#">Litoral</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contato</h4>
+                    <ul>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Av. Paulista, 1000 - 10º andar<br>São Paulo - SP</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:+5511999999999">(11) 99999-9999</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:contato@larprime.com.br">contato@larprime.com.br</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Lar Prime Imobiliária. Todos os direitos reservados.</p>
+                <p>CRECI: 12345-J | CNPJ: 00.000.000/0001-00</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/5511999999999?text=Olá! Tenho interesse no imóvel: Casa Moderna com Piscina - Jardins" class="whatsapp-float" aria-label="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span>Tenho Interesse</span>
+    </a>
+
+    <script src="script.js"></script>
+    <script>
+        // Gallery functionality
+        document.querySelectorAll('.gallery-thumb').forEach(thumb => {
+            thumb.addEventListener('click', () => {
+                const mainImg = document.getElementById('main-image');
+                const newSrc = thumb.querySelector('img').src.replace('w=400&h=300', 'w=1200&h=800');
+                mainImg.style.opacity = '0';
+                setTimeout(() => {
+                    mainImg.src = newSrc;
+                    mainImg.style.opacity = '1';
+                }, 200);
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lar Prime | Encontre o Imóvel dos Seus Sonhos com IA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="ai-styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="container navbar-content">
+            <a href="index.html" class="logo">
+                <span class="logo-icon">◆</span>
+                <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
+                <span class="ai-badge">IA</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html" class="active">Início</a></li>
+                <li><a href="imoveis.html">Imóveis</a></li>
+                <li><a href="sobre.html">Sobre Nós</a></li>
+                <li><a href="contato.html">Contato</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="tel:+5511999999999" class="nav-phone">
+                    <i class="fas fa-phone"></i>
+                    <span>(11) 99999-9999</span>
+                </a>
+                <a href="contato.html" class="btn btn-primary">Fale Conosco</a>
+            </div>
+            <button class="mobile-menu-btn" aria-label="Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section with AI Search -->
+    <section class="hero hero-ai">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+        <div class="container hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-robot"></i>
+                <span>Busca inteligente com IA • A forma mais fácil de encontrar seu lar</span>
+            </div>
+            <h1 class="hero-title">
+                Conte pra gente:<br>
+                <span class="text-gradient">Como é seu lar ideal?</span>
+            </h1>
+            <p class="hero-subtitle">
+                Esqueça formulários complicados. Apenas descreva o que você procura, 
+                como se estivesse conversando com um amigo.
+            </p>
+            
+            <!-- AI Natural Language Search -->
+            <div class="ai-search-box">
+                <div class="ai-search-icon">
+                    <i class="fas fa-sparkles"></i>
+                </div>
+                <div class="ai-search-input-wrapper">
+                    <textarea 
+                        id="ai-search-input" 
+                        class="ai-search-input" 
+                        placeholder="Ex: Quero um apartamento de 3 quartos perto do metrô, até 600 mil, com vaga de garagem e aceite pet..."
+                        rows="1"
+                    ></textarea>
+                    <div class="ai-search-suggestions">
+                        <span class="suggestion-label">Experimente:</span>
+                        <button class="suggestion-chip" data-text="Apartamento para casal jovem, primeiro imóvel, até 400 mil">
+                            🏠 Primeiro imóvel
+                        </button>
+                        <button class="suggestion-chip" data-text="Casa grande com quintal para família com 3 filhos e cachorro">
+                            👨‍👩‍👧‍👦 Família grande
+                        </button>
+                        <button class="suggestion-chip" data-text="Studio ou loft moderno perto de transporte público para investimento">
+                            💼 Investimento
+                        </button>
+                        <button class="suggestion-chip" data-text="Cobertura de luxo com vista, área gourmet e piscina privativa">
+                            ✨ Alto padrão
+                        </button>
+                    </div>
+                </div>
+                <button id="ai-search-btn" class="ai-search-btn">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    <span>Buscar com IA</span>
+                </button>
+            </div>
+
+            <!-- Alternative: Start AI Conversation -->
+            <div class="ai-alternative">
+                <span>ou</span>
+                <button id="start-ai-chat" class="btn-ai-chat">
+                    <i class="fas fa-comments"></i>
+                    Deixe a IA me guiar com perguntas
+                </button>
+            </div>
+
+            <!-- Stats -->
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-number">2.500+</span>
+                    <span class="stat-label">Imóveis Analisados pela IA</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">94%</span>
+                    <span class="stat-label">Precisão nas Recomendações</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-number">3 min</span>
+                    <span class="stat-label">Tempo Médio para Encontrar</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Chat Modal -->
+    <div id="ai-chat-modal" class="ai-modal">
+        <div class="ai-modal-content">
+            <button class="ai-modal-close" id="close-ai-chat">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <div class="ai-chat-header">
+                <div class="ai-avatar">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <div>
+                    <h3>Luna</h3>
+                    <span>Assistente Imobiliária IA</span>
+                </div>
+            </div>
+
+            <div class="ai-chat-messages" id="chat-messages">
+                <!-- Messages will be inserted here -->
+            </div>
+
+            <div class="ai-chat-input-area">
+                <div id="ai-options" class="ai-options">
+                    <!-- Options will be inserted here -->
+                </div>
+                <div class="ai-chat-input-wrapper">
+                    <input type="text" id="chat-input" placeholder="Digite sua resposta..." class="ai-chat-input">
+                    <button id="send-chat" class="ai-chat-send">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- AI Search Results Section -->
+    <section id="ai-results" class="section ai-results-section" style="display: none;">
+        <div class="container">
+            <div class="ai-results-header">
+                <div class="ai-understanding">
+                    <div class="ai-avatar-small">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="ai-understanding-content">
+                        <h3>Entendi! Você está procurando:</h3>
+                        <p id="ai-understanding-text"></p>
+                        <div id="ai-criteria-tags" class="ai-criteria-tags"></div>
+                    </div>
+                </div>
+                <button id="refine-search" class="btn btn-outline">
+                    <i class="fas fa-sliders"></i>
+                    Refinar busca
+                </button>
+            </div>
+
+            <div class="ai-results-grid" id="ai-results-grid">
+                <!-- Results will be inserted here -->
+            </div>
+
+            <div class="ai-results-footer">
+                <button class="btn btn-primary btn-lg" id="load-more-ai">
+                    <i class="fas fa-plus"></i>
+                    Ver mais recomendações
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- How AI Works Section -->
+    <section class="section ai-how-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Tecnologia exclusiva</span>
+                <h2 class="section-title">Como nossa <span class="text-gradient">IA funciona</span></h2>
+                <p class="section-subtitle">Uma experiência completamente diferente de buscar imóveis</p>
+            </div>
+
+            <div class="ai-how-grid">
+                <div class="ai-how-card">
+                    <div class="ai-how-number">01</div>
+                    <div class="ai-how-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Você descreve</h3>
+                    <p>Conte em suas próprias palavras o que procura. Não precisa preencher 20 campos de filtro — só dizer o que importa pra você.</p>
+                </div>
+
+                <div class="ai-how-card">
+                    <div class="ai-how-number">02</div>
+                    <div class="ai-how-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>IA compreende</h3>
+                    <p>Nossa IA interpreta suas necessidades reais: tamanho da família, estilo de vida, prioridades, orçamento e localização ideal.</p>
+                </div>
+
+                <div class="ai-how-card">
+                    <div class="ai-how-number">03</div>
+                    <div class="ai-how-icon">
+                        <i class="fas fa-percentage"></i>
+                    </div>
+                    <h3>Match inteligente</h3>
+                    <p>Cada imóvel recebe uma pontuação de compatibilidade com seu perfil. Você vê primeiro os que mais combinam com você.</p>
+                </div>
+
+                <div class="ai-how-card">
+                    <div class="ai-how-number">04</div>
+                    <div class="ai-how-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3>Aprende com você</h3>
+                    <p>A cada interação, a IA refina as recomendações. Quanto mais você explora, mais certeiras ficam as sugestões.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- AI Featured Picks -->
+    <section class="section properties-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Selecionados pela IA</span>
+                <h2 class="section-title">Imóveis em <span class="text-gradient">Alta Demanda</span></h2>
+                <p class="section-subtitle">Nossa IA identificou os imóveis mais procurados e com melhor custo-benefício</p>
+            </div>
+            
+            <div class="properties-grid">
+                <!-- Property Card 1 with AI Match -->
+                <article class="property-card property-card-ai">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop" alt="Casa moderna com piscina">
+                        <div class="property-badges">
+                            <span class="badge badge-ai">
+                                <i class="fas fa-fire"></i> Popular
+                            </span>
+                        </div>
+                        <div class="ai-match-score">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Alto interesse</span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 1.250.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Jardins, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Casa Moderna com Piscina</h3>
+                        <p class="ai-insight">
+                            <i class="fas fa-robot"></i>
+                            Ideal para famílias. 15 interessados essa semana.
+                        </p>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>4 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>3 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>2 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>280 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 2 -->
+                <article class="property-card property-card-ai">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=800&h=600&fit=crop" alt="Apartamento de luxo">
+                        <div class="property-badges">
+                            <span class="badge badge-ai-best">
+                                <i class="fas fa-trophy"></i> Melhor custo-benefício
+                            </span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 890.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Vila Olímpia, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Apartamento Alto Padrão</h3>
+                        <p class="ai-insight">
+                            <i class="fas fa-robot"></i>
+                            Preço 12% abaixo da média da região.
+                        </p>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>3 Quartos</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>2 Banheiros</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>2 Vagas</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>145 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
+                <!-- Property Card 3 -->
+                <article class="property-card property-card-ai">
+                    <div class="property-image">
+                        <img src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop" alt="Studio moderno">
+                        <div class="property-badges">
+                            <span class="badge badge-ai-invest">
+                                <i class="fas fa-chart-pie"></i> Ótimo p/ investir
+                            </span>
+                        </div>
+                        <button class="property-favorite" aria-label="Favoritar">
+                            <i class="far fa-heart"></i>
+                        </button>
+                        <div class="property-price">R$ 420.000</div>
+                    </div>
+                    <div class="property-content">
+                        <div class="property-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Pinheiros, São Paulo - SP</span>
+                        </div>
+                        <h3 class="property-title">Studio Moderno Mobiliado</h3>
+                        <p class="ai-insight">
+                            <i class="fas fa-robot"></i>
+                            ROI estimado de 0.6% ao mês em aluguel.
+                        </p>
+                        <div class="property-features">
+                            <div class="feature">
+                                <i class="fas fa-bed"></i>
+                                <span>1 Quarto</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-bath"></i>
+                                <span>1 Banheiro</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-car"></i>
+                                <span>1 Vaga</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-ruler-combined"></i>
+                                <span>38 m²</span>
+                            </div>
+                        </div>
+                        <div class="property-footer">
+                            <a href="imovel-detalhe.html" class="btn btn-outline">Ver Detalhes</a>
+                            <a href="https://wa.me/5511999999999" class="btn-whatsapp">
+                                <i class="fab fa-whatsapp"></i>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="section-cta">
+                <a href="imoveis.html" class="btn btn-primary btn-lg">
+                    Ver Todos os Imóveis
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us -->
+    <section class="section benefits-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Por que somos diferentes</span>
+                <h2 class="section-title">IA + Atendimento <span class="text-gradient">Humano</span></h2>
+                <p class="section-subtitle">O melhor dos dois mundos: tecnologia de ponta com o calor humano que você merece.</p>
+            </div>
+
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Busca 10x mais rápida</h3>
+                    <p>Enquanto outros sites pedem 15 filtros, você descreve em uma frase e nossa IA encontra.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Entende contexto</h3>
+                    <p>"Perto do trabalho" ou "bom pra criança" — a IA interpreta o que você realmente precisa.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <h3>Análise de mercado</h3>
+                    <p>Saiba se o preço está bom, quanto vale investir e qual o potencial de valorização.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>Consultor dedicado</h3>
+                    <p>Depois que a IA encontra, um humano de verdade cuida de você até as chaves na mão.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>100% verificado</h3>
+                    <p>Todos os imóveis passam por validação de documentação e visita técnica real.</p>
+                </div>
+
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3>24/7 disponível</h3>
+                    <p>A IA nunca dorme. Busque, explore e salve favoritos a qualquer hora do dia.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section testimonials-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-tag">Depoimentos</span>
+                <h2 class="section-title">Quem já usou, <span class="text-gradient">aprovou</span></h2>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Eu só digitei 'apartamento pet friendly perto do Ibirapuera' e a IA me mostrou exatamente o que eu queria. Em 2 semanas fechei negócio!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" alt="Camila Ferreira">
+                        <div>
+                            <strong>Camila Ferreira</strong>
+                            <span>Comprou apartamento em Moema</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card featured">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"Incrível como a IA entendeu que 'espaço pro home office' significava um cômodo extra. Passei meses em outros sites preenchendo filtros sem achar nada. Aqui foi diferente."</p>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" alt="Ricardo Gomes">
+                        <div>
+                            <strong>Ricardo Gomes</strong>
+                            <span>Comprou casa em Alphaville</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <p class="testimonial-text">"A análise de investimento que a IA fez me convenceu a comprar o studio. Hoje já está alugado pelo valor que ela previu!"</p>
+                    <div class="testimonial-author">
+                        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&h=100&fit=crop&crop=face" alt="André Lima">
+                        <div>
+                            <strong>André Lima</strong>
+                            <span>Investidor imobiliário</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="cta-bg"></div>
+        <div class="container cta-content">
+            <h2>Pronto para encontrar seu <span class="text-gradient">Lar Perfeito</span>?</h2>
+            <p>Nossa IA está pronta. São apenas algumas palavras entre você e o imóvel dos seus sonhos.</p>
+            <div class="cta-buttons">
+                <button class="btn btn-primary btn-lg" onclick="document.getElementById('ai-search-input').focus(); window.scrollTo({top: 0, behavior: 'smooth'});">
+                    <i class="fas fa-wand-magic-sparkles"></i>
+                    Começar Busca com IA
+                </button>
+                <a href="https://wa.me/5511999999999" class="btn btn-whatsapp-lg">
+                    <i class="fab fa-whatsapp"></i>
+                    Falar com Consultor
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <a href="index.html" class="logo">
+                        <span class="logo-icon">◆</span>
+                        <span class="logo-text">Lar<span class="logo-accent">Prime</span></span>
+                        <span class="ai-badge">IA</span>
+                    </a>
+                    <p>A primeira imobiliária com busca por inteligência artificial do Brasil. Transformando a forma como você encontra seu lar.</p>
+                    <div class="footer-social">
+                        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+                        <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Links Rápidos</h4>
+                    <ul>
+                        <li><a href="index.html">Início</a></li>
+                        <li><a href="imoveis.html">Imóveis à Venda</a></li>
+                        <li><a href="imoveis.html">Imóveis para Alugar</a></li>
+                        <li><a href="sobre.html">Sobre Nós</a></li>
+                        <li><a href="contato.html">Contato</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Regiões</h4>
+                    <ul>
+                        <li><a href="#">Zona Sul</a></li>
+                        <li><a href="#">Zona Oeste</a></li>
+                        <li><a href="#">Centro</a></li>
+                        <li><a href="#">Alphaville</a></li>
+                        <li><a href="#">Litoral</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contato</h4>
+                    <ul>
+                        <li>
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>Av. Paulista, 1000 - 10º andar<br>São Paulo - SP</span>
+                        </li>
+                        <li>
+                            <i class="fas fa-phone"></i>
+                            <a href="tel:+5511999999999">(11) 99999-9999</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-envelope"></i>
+                            <a href="mailto:contato@larprime.com.br">contato@larprime.com.br</a>
+                        </li>
+                        <li>
+                            <i class="fas fa-clock"></i>
+                            <span>IA: 24/7 | Humanos: 9h-18h</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 Lar Prime Imobiliária. Todos os direitos reservados.</p>
+                <p>CRECI: 12345-J | CNPJ: 00.000.000/0001-00</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Float Button -->
+    <a href="https://wa.me/5511999999999" class="whatsapp-float" aria-label="Fale conosco no WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span>Fale Conosco</span>
+    </a>
+
+    <!-- AI Chat Float Button -->
+    <button id="ai-float-btn" class="ai-float-btn" aria-label="Assistente IA">
+        <i class="fas fa-robot"></i>
+        <span>Luna IA</span>
+    </button>
+
+    <script src="script.js"></script>
+    <script src="ai-search.js"></script>
+</body>
+</html>
