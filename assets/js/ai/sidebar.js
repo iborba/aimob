@@ -320,8 +320,12 @@ function handleSidebarInput(state, savedData) {
                 askRefinementQuestion('payment', state, savedData);
             } else if (!state.questionsAsked.has('current_situation')) {
                 askRefinementQuestion('current_situation', state, savedData);
+            } else if (!state.questionsAsked.has('contact')) {
+                // Por último, pedir contato (telefone ou email)
+                askRefinementQuestion('contact', state, savedData);
             } else {
                 addLunaSidebarMessage("Perfeito! Com essas informações, consigo te ajudar ainda melhor. Os resultados já estão filtrados pra você! 😊");
+                addLunaSidebarMessage("Se quiser refinar mais alguma coisa, é só me falar! Estou sempre aqui pra ajudar! ✨");
             }
         }, 1000);
     }
@@ -509,6 +513,47 @@ function processSidebarAnswer(field, value, savedData) {
                 whyMoving: value // Salva contexto adicional
             };
         }
+    } else if (field === 'contact') {
+        // Extract phone or email
+        const phoneMatch = value.match(/(?:\(?(\d{2})\)?\s*)?(\d{4,5}[-.\s]?\d{4,5})/);
+        const emailMatch = value.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+        
+        if (phoneMatch) {
+            let phone = phoneMatch[0].replace(/[^\d]/g, '');
+            if (phone.length >= 10 && phone.length <= 11) {
+                leadUpdates.phone = phone;
+            }
+        }
+        
+        if (emailMatch) {
+            leadUpdates.email = emailMatch[0];
+        }
+        
+        // Se não encontrou nem telefone nem email, salva o texto original para contexto
+        if (!phoneMatch && !emailMatch) {
+            // Pode ser que o usuário tenha escrito de forma diferente
+            // Salva como texto livre para análise posterior
+            leadUpdates.contactText = value;
+        }
+    }
+    
+    // Salva filtros como metadata sempre que houver mudanças
+    if (filtersChanged) {
+        const currentLead = getOrCreateLeadData();
+        const currentFilters = {
+            tipo: filters.tipo || currentLead.searchFilters?.tipo || null,
+            quartos: filters.quartos || currentLead.searchFilters?.quartos || null,
+            preco_max: filters.preco_max || currentLead.searchFilters?.preco_max || null,
+            preco_min: filters.preco_min || currentLead.searchFilters?.preco_min || null,
+            localizacao: filters.localizacao || currentLead.searchFilters?.localizacao || null,
+            features: filters.features || currentLead.searchFilters?.features || null
+        };
+        leadUpdates.searchFilters = currentFilters;
+        leadUpdates.filterHistory = leadUpdates.filterHistory || currentLead.filterHistory || [];
+        leadUpdates.filterHistory.push({
+            timestamp: new Date().toISOString(),
+            filters: { ...currentFilters }
+        });
     }
     
     // Salva informações no leadData (mantém contexto)
@@ -563,6 +608,24 @@ function processSidebarAnswer(field, value, savedData) {
         } else {
             acknowledgment = "Entendi sobre sua situação atual! ";
         }
+    } else if (field === 'contact') {
+        const phoneMatch = value.match(/(?:\(?(\d{2})\)?\s*)?(\d{4,5}[-.\s]?\d{4,5})/);
+        const emailMatch = value.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
+        
+        if (phoneMatch) {
+            acknowledgment = "Perfeito! Vou salvar seu WhatsApp. Um dos nossos consultores vai entrar em contato com as melhores opções! 📱";
+        } else if (emailMatch) {
+            acknowledgment = "Perfeito! Vou salvar seu e-mail. Vou te enviar as melhores opções por lá! 📧";
+        } else {
+            acknowledgment = "Entendi! Vou salvar essas informações. Obrigada! 😊";
+        }
+        // Após salvar contato, oferece continuar refinando
+        setTimeout(() => {
+            addLunaSidebarMessage("Se quiser refinar mais alguma coisa na busca, é só me falar! Estou sempre aqui! ✨");
+        }, 1500);
+    } else if (field === 'free_filter') {
+        // Já processado em processFreeTextFilter
+        acknowledgment = "";
     } else {
         acknowledgment = "Entendi! ";
     }

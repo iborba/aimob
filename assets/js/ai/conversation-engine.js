@@ -241,10 +241,23 @@ function decideNextQuestion(context) {
     
     // Priority order: what's most critical and what makes sense in context
     
+    // 0. NOME - Perguntar no início para personalizar
+    if (!context.hasName && !justMentioned.has('name') && !allMessages.match(/meu nome|eu sou|eu sou o|eu sou a|chamo|sou o|sou a|me chamo/i)) {
+        return {
+            id: 'name_first',
+            message: "Pra começar, me diz seu nome? 😊",
+            field: 'name',
+            type: 'text',
+            optional: false
+        };
+    }
+    
     // 1. LOCALIZAÇÃO - CIDADE (CRÍTICO! Perguntar antes de tudo)
-    if (!context.hasLocation && !justMentioned.has('location') && !allMessages.match(/porto alegre|canoas|viamão|gravataí|cachoeirinha|são leopoldo|novo hamburgo|cidade/i)) {
+    if (!context.hasLocation && !justMentioned.has('location') && !allMessages.match(/porto alegre|canoas|viamão|gravataí|cachoeirinha|são leopoldo|novo hamburgo|cidade|moro|mora|onde mora/i)) {
         let question = "";
-        if (context.hasPropertyType) {
+        if (leadData.name) {
+            question = `Oi ${leadData.name}! E me conta... em qual cidade você mora ou tá pensando em encontrar? `;
+        } else if (context.hasPropertyType) {
             question = `Ah, legal! E em qual cidade você tá pensando em encontrar esse ${leadData.propertyType}? `;
         } else {
             question = "E me conta... em qual cidade você tá pensando? ";
@@ -291,65 +304,46 @@ function decideNextQuestion(context) {
                           context.hasBedrooms || context.hasMotivation);
     
     if (hasEnoughInfo) {
-        // Before closing, ask for contact info if not collected yet
-        // Ask for WhatsApp first, then email
-        if (!leadData.phone && !leadData.email) {
-            // Ask for WhatsApp first
-            return {
-                id: 'contact_whatsapp',
-                message: "Ah, e me diz... você gostaria de receber as melhores opções direto no seu WhatsApp? Se quiser, é só me passar o número! 😊",
-                field: 'phone',
-                type: 'text',
-                optional: true
-            };
-        } else if (!leadData.email && leadData.phone) {
-            // Already has WhatsApp, ask for email
-            return {
-                id: 'contact_email',
-                message: "E me passa seu e-mail também? Assim posso te enviar mais detalhes dos imóveis que você vai gostar! 📧",
-                field: 'email',
-                type: 'text',
-                optional: true
-            };
-        } else {
-            // Has contact info or user declined, proceed to closing
-            let closingMessage = "";
-            
-            // Add specific details we know
-            const details = [];
-            if (context.hasPropertyType) {
-                details.push(`um ${leadData.propertyType}`);
-            }
-            if (context.hasBedrooms) {
-                details.push(`${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`);
-            }
-            if (context.hasBudget) {
-                const budget = leadData.budget?.max || leadData.budget?.min;
-                if (budget) {
-                    details.push(`até ${formatCurrency(budget)}`);
-                }
-            }
-            if (context.hasLocation) {
-                details.push(`na região de ${leadData.location}`);
-            }
-            
-            if (details.length > 0) {
-                closingMessage = `Perfeito! Entendi que você busca ${details.join(', ')}. `;
-            } else {
-                closingMessage = "Perfeito! ";
-            }
-            
-            closingMessage += "Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊";
-            
-            // Save lead before redirecting
-            saveLeadToStorage();
-            
-            return {
-                type: 'close',
-                message: closingMessage,
-                redirectToResults: true
-            };
+        // Proceed directly to closing - NO contact info questions here
+        // Contact will be asked in sidebar after results are shown
+        let closingMessage = "";
+        
+        // Add specific details we know
+        const details = [];
+        if (context.hasPropertyType) {
+            details.push(`um ${leadData.propertyType}`);
         }
+        if (context.hasBedrooms) {
+            details.push(`${leadData.bedrooms} quarto${leadData.bedrooms > 1 ? 's' : ''}`);
+        }
+        if (context.hasBudget) {
+            const budget = leadData.budget?.max || leadData.budget?.min;
+            if (budget) {
+                details.push(`até ${formatCurrency(budget)}`);
+            }
+        }
+        if (context.hasLocation) {
+            details.push(`na região de ${leadData.location}`);
+        }
+        
+        if (details.length > 0) {
+            closingMessage = `Perfeito! Entendi que você busca ${details.join(', ')}. `;
+        } else {
+            closingMessage = "Perfeito! ";
+        }
+        
+        closingMessage += "Com o que você me contou, já consigo te mostrar algumas opções que podem fazer sentido pra você. Que tal darmos uma olhada? 😊";
+        
+        // Save lead with current filters as metadata before redirecting
+        const filters = buildSearchFilters();
+        leadData.searchFilters = filters; // Save filters as metadata
+        saveLeadToStorage();
+        
+        return {
+            type: 'close',
+            message: closingMessage,
+            redirectToResults: true
+        };
     }
     
     // Fallback: if we have some info but not enough for closing, ask for more context

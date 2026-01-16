@@ -121,7 +121,11 @@ let leadData = {
     chatDuration: 0,
     questionsAnswered: 0,
     startedAt: new Date(),
-    completedAt: null
+    completedAt: null,
+    
+    // Search filters metadata (histórico de filtros aplicados)
+    searchFilters: null,
+    filterHistory: [] // Array de filtros aplicados ao longo da conversa
 };
 
 // ========================================

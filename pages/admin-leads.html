@@ -568,6 +568,48 @@
                 </div>
                 
                 <div class="lead-detail-section">
+                    <h3>Filtros de Busca Aplicados</h3>
+                    <div class="lead-detail-grid">
+                        <div class="detail-item">
+                            <label>Tipo</label>
+                            <div class="value">${lead.searchFilters?.tipo || 'Não especificado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Quartos</label>
+                            <div class="value">${lead.searchFilters?.quartos || 'Não especificado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Preço Máximo</label>
+                            <div class="value">${lead.searchFilters?.preco_max ? new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(lead.searchFilters.preco_max) : 'Não especificado'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <label>Localização</label>
+                            <div class="value">${lead.searchFilters?.localizacao || 'Não especificado'}</div>
+                        </div>
+                        ${lead.searchFilters?.features ? `
+                        <div class="detail-item" style="grid-column: 1/-1;">
+                            <label>Features</label>
+                            <div class="value">${lead.searchFilters.features}</div>
+                        </div>
+                        ` : ''}
+                    </div>
+                    ${lead.filterHistory && lead.filterHistory.length > 1 ? `
+                    <div style="margin-top: 16px; padding: 12px; background: var(--color-bg-medium); border-radius: 8px;">
+                        <label style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-bottom: 8px;">Histórico de Filtros (${lead.filterHistory.length} alterações)</label>
+                        <div style="font-size: 0.85rem; color: var(--color-text-secondary);">
+                            ${lead.filterHistory.slice(-3).map((f, i) => `
+                                <div style="margin-bottom: 4px;">
+                                    ${new Date(f.timestamp).toLocaleTimeString('pt-BR')}: 
+                                    ${f.filters.tipo || ''} ${f.filters.quartos ? f.filters.quartos + ' quartos' : ''} 
+                                    ${f.filters.localizacao || ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+                
+                <div class="lead-detail-section">
                     <h3>Metadados</h3>
                     <div class="lead-detail-grid">
                         <div class="detail-item">
