@@ -116,8 +116,22 @@ function extractAllCriteria(text, field = null) {
     // ========================================
     // BUDGET
     // ========================================
-    if (field === 'budget.range' || text.match(/mil|milhão|reais|r\$/i)) {
+    if (field === 'budget.range' || text.match(/mil|milhão|reais|r\$|\d{4,}/i)) {
         const hasMillionWord = /milh[oõ]es?/i.test(text);
+        
+        // NEW: Detect large numbers directly (e.g., "1000000" = 1 milhão)
+        const largeNumberMatch = text.match(/(?:até|até\s*|uns?\s*|máximo\s*de\s*)?(?:r\$\s*)?(\d{4,})/);
+        if (largeNumberMatch && !hasMillionWord) {
+            let value = parseFloat(largeNumberMatch[1].replace(/\./g, '').replace(',', '.'));
+            // If number is >= 1000000, treat as millions
+            if (value >= 1000000) {
+                extracted.budget = { max: value };
+            } else if (value >= 1000) {
+                // If between 1000-999999, could be thousands or a direct value
+                // Assume it's a direct value (not multiplied)
+                extracted.budget = { max: value };
+            }
+        }
         
         if (hasMillionWord) {
             const millionMatch = text.match(/(?:até|até\s*|uns?\s*|máximo\s*de\s*)?(?:r\$\s*)?(\d+(?:[.,]\d+)?)\s*(?:milh[oõ]es?|m[ií]lh[oõ]es?)/i);
@@ -126,7 +140,8 @@ function extractAllCriteria(text, field = null) {
                 value *= 1000000;
                 extracted.budget = { max: value };
             }
-        } else {
+        } else if (!largeNumberMatch) {
+            // Only check for "mil" if we haven't already found a large number
             const thousandMatch = text.match(/(?:até|até\s*|uns?\s*|máximo\s*de\s*)?(?:r\$\s*)?(\d+(?:[.,]\d+)?)\s*(mil|k)\b/i);
             if (thousandMatch) {
                 let value = parseFloat(thousandMatch[1].replace(',', '.'));

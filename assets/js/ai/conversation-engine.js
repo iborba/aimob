@@ -443,6 +443,20 @@ function decideNextQuestion(context) {
 // CONVERSATION HANDLER
 // ========================================
 function handleConversation(userMessage) {
+    // Prevent restart if user just says "oi" or "luna" during conversation
+    const lowerMsg = userMessage.toLowerCase().trim();
+    const isGreeting = /^(oi|olá|olá luna|oi luna|hey|luna)$/i.test(lowerMsg);
+    
+    // If it's just a greeting and we already have conversation context, acknowledge and continue
+    if (isGreeting && conversationMemory.messages.length > 2) {
+        // We have context, just acknowledge the greeting
+        return {
+            acknowledgment: "Oi! 😊",
+            nextQuestion: null, // Don't ask new question, wait for user input
+            context: analyzeContext()
+        };
+    }
+    
     // Save user message to memory
     conversationMemory.messages.push({
         role: 'user',
