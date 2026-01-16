@@ -38,6 +38,8 @@ document.addEventListener('DOMContentLoaded', function() {
 // ========================================
 // LEAD DATA STRUCTURE
 // ========================================
+// GLOBAL LEAD DATA (acessível por sidebar e conversation engine)
+// ========================================
 let leadData = {
     // Basic Info
     name: null,
@@ -1291,14 +1293,31 @@ function finishChat() {
 // ========================================
 function saveLeadToStorage() {
     try {
+        // Calculate lead score
+        const score = calculateLeadScore();
+        leadData.qualityScore = score;
+        leadData.timestamp = new Date().toISOString();
+        leadData.id = leadData.id || `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        
         // Get existing leads
         const existingLeads = JSON.parse(localStorage.getItem('larprime_leads') || '[]');
         
-        // Add new lead
-        existingLeads.push({...leadData});
+        // Check if lead already exists (by ID or similar data)
+        const existingIndex = existingLeads.findIndex(l => l.id === leadData.id);
+        
+        if (existingIndex >= 0) {
+            // Update existing lead (merge with new data)
+            existingLeads[existingIndex] = { ...existingLeads[existingIndex], ...leadData };
+        } else {
+            // Add new lead
+            existingLeads.push({...leadData});
+        }
         
         // Save back
         localStorage.setItem('larprime_leads', JSON.stringify(existingLeads));
+        
+        // Make leadData globally accessible for sidebar
+        window.leadData = leadData;
         
         // Trigger storage event for admin panel
         window.dispatchEvent(new StorageEvent('storage', {

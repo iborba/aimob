@@ -828,36 +828,45 @@ if (typeof window !== 'undefined') {
     // ========================================
     // CALCULATE LEAD SCORE
     // ========================================
-    function calculateLeadScore() {
+    function calculateLeadScore(lead = leadData) {
         let score = 0;
         
         // Contact info (30 points)
-        if (leadData.phone) score += 15;
-        if (leadData.email) score += 10;
-        if (leadData.name) score += 5;
+        if (lead.phone) score += 15;
+        if (lead.email) score += 10;
+        if (lead.name) score += 5;
         
         // Property preferences (25 points)
-        if (leadData.propertyType) score += 5;
-        if (leadData.bedrooms) score += 5;
-        if (leadData.location) score += 10;
-        if (leadData.mustHaveFeatures && leadData.mustHaveFeatures.length > 0) score += 5;
+        if (lead.propertyType) score += 5;
+        if (lead.bedrooms) score += 5;
+        if (lead.location) score += 10;
+        if (lead.mustHaveFeatures && lead.mustHaveFeatures.length > 0) score += 5;
         
         // Budget (25 points)
-        if (leadData.budget?.exact) score += 20;
-        else if (leadData.budget?.max) score += 15;
-        else if (leadData.budget?.min) score += 10;
+        if (lead.budget?.exact) score += 20;
+        else if (lead.budget?.max) score += 15;
+        else if (lead.budget?.min) score += 10;
         
         // Timeline (10 points)
-        if (leadData.timeline?.when) {
+        if (lead.timeline?.when) {
             score += 5;
-            if (leadData.timeline.urgency === 'high') score += 5;
+            if (lead.timeline.urgency === 'high') score += 5;
         }
         
         // Motivation (10 points)
-        if (leadData.motivation?.primary) score += 10;
+        if (lead.motivation?.primary) score += 10;
+        
+        // Payment method (5 points)
+        if (lead.purchaseCondition?.method) score += 5;
+        
+        // Current situation (5 points)
+        if (lead.currentSituation?.living) score += 5;
         
         return Math.min(score, 100);
     }
+    
+    // Make calculateLeadScore globally available
+    window.calculateLeadScore = calculateLeadScore;
     
     window.conversationEngine = {
         handleConversation,

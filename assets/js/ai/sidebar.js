@@ -1,10 +1,135 @@
 // ========================================
 // LUNA SIDEBAR - Refinamento de Busca
+// Mantém contexto da conversa inicial e salva todas as informações no leadData
 // ========================================
 
 document.addEventListener('DOMContentLoaded', function() {
     initLunaSidebar();
 });
+
+// ========================================
+// GET OR CREATE LEAD DATA (mantém contexto)
+// ========================================
+function getOrCreateLeadData() {
+    // Tenta acessar o leadData global da conversa inicial
+    if (typeof window.leadData !== 'undefined' && window.leadData) {
+        return window.leadData;
+    }
+    
+    // Se não existe, tenta recuperar do localStorage (último lead salvo)
+    const existingLeads = JSON.parse(localStorage.getItem('larprime_leads') || '[]');
+    if (existingLeads.length > 0) {
+        // Retorna o último lead como base (para manter contexto)
+        const lastLead = existingLeads[existingLeads.length - 1];
+        // Cria um novo objeto baseado no último, mas sem sobrescrever
+        return {
+            ...lastLead,
+            // Não sobrescrever dados já coletados
+        };
+    }
+    
+    // Se não há leadData, cria um novo baseado nos parâmetros da URL
+    const urlParams = new URLSearchParams(window.location.search);
+    return {
+        propertyType: urlParams.get('tipo') || null,
+        bedrooms: urlParams.get('quartos') ? parseInt(urlParams.get('quartos')) : null,
+        budget: {
+            max: urlParams.get('preco_max') ? parseInt(urlParams.get('preco_max')) : null,
+            min: urlParams.get('preco_min') ? parseInt(urlParams.get('preco_min')) : null
+        },
+        location: urlParams.get('localizacao') || null,
+        mustHaveFeatures: [],
+        timeline: { when: null, urgency: null },
+        purchaseCondition: { method: null },
+        currentSituation: { living: null },
+        qualityScore: 0,
+        timestamp: new Date().toISOString()
+    };
+}
+
+// ========================================
+// UPDATE LEAD DATA AND SAVE
+// ========================================
+function updateLeadDataAndSave(updates) {
+    // Acessa ou cria leadData
+    let leadData = getOrCreateLeadData();
+    
+    // Faz merge dos updates (mantém dados existentes)
+    function deepMerge(target, source) {
+        for (const key in source) {
+            if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                target[key] = target[key] || {};
+                deepMerge(target[key], source[key]);
+            } else if (source[key] !== null && source[key] !== undefined) {
+                target[key] = source[key];
+            }
+        }
+        return target;
+    }
+    
+    leadData = deepMerge(leadData, updates);
+    
+    // Atualiza timestamp
+    leadData.timestamp = new Date().toISOString();
+    
+    // Recalcula score
+    if (typeof window.calculateLeadScore === 'function') {
+        leadData.qualityScore = window.calculateLeadScore(leadData);
+    } else {
+        // Fallback: cálculo básico de score
+        let score = 0;
+        if (leadData.phone) score += 15;
+        if (leadData.email) score += 10;
+        if (leadData.name) score += 5;
+        if (leadData.propertyType) score += 5;
+        if (leadData.bedrooms) score += 5;
+        if (leadData.location) score += 10;
+        if (leadData.mustHaveFeatures && leadData.mustHaveFeatures.length > 0) score += 5;
+        if (leadData.budget?.exact) score += 20;
+        else if (leadData.budget?.max) score += 15;
+        else if (leadData.budget?.min) score += 10;
+        if (leadData.timeline?.when) {
+            score += 5;
+            if (leadData.timeline.urgency === 'high') score += 5;
+        }
+        if (leadData.motivation?.primary) score += 10;
+        if (leadData.purchaseCondition?.method) score += 10;
+        if (leadData.currentSituation?.living) score += 5;
+        leadData.qualityScore = Math.min(score, 100);
+    }
+    
+    // Salva no localStorage
+    const existingLeads = JSON.parse(localStorage.getItem('larprime_leads') || '[]');
+    
+    // Procura se já existe um lead com o mesmo ID ou dados similares
+    const leadId = leadData.id || `lead_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    leadData.id = leadId;
+    
+    const existingIndex = existingLeads.findIndex(l => l.id === leadId);
+    
+    if (existingIndex >= 0) {
+        // Atualiza lead existente
+        existingLeads[existingIndex] = { ...existingLeads[existingIndex], ...leadData };
+    } else {
+        // Adiciona novo lead
+        existingLeads.push(leadData);
+    }
+    
+    localStorage.setItem('larprime_leads', JSON.stringify(existingLeads));
+    
+    // Atualiza leadData global se existir
+    if (typeof window.leadData !== 'undefined') {
+        window.leadData = leadData;
+    }
+    
+    // Dispara evento para atualizar dashboard
+    window.dispatchEvent(new StorageEvent('storage', {
+        key: 'larprime_leads',
+        newValue: JSON.stringify(existingLeads)
+    }));
+    
+    return leadData;
+}
 
 function initLunaSidebar() {
     // Create sidebar HTML
@@ -214,8 +339,9 @@ function processSidebarAnswer(field, value, savedData) {
     };
     
     let filtersChanged = false;
+    const leadUpdates = {}; // Dados para salvar no leadData
     
-    // Process answer and update filters
+    // Process answer and update filters + leadData
     if (field === 'location') {
         // Extract location - PRIORIDADE: CIDADE primeiro
         let location = '';
@@ -257,11 +383,13 @@ function processSidebarAnswer(field, value, savedData) {
         if (location) {
             filters.localizacao = location;
             savedData.location = location;
+            leadUpdates.location = location;
             filtersChanged = true;
         } else {
             // Se não conseguiu extrair, usar o valor original como fallback
             filters.localizacao = value;
             savedData.location = value;
+            leadUpdates.location = value;
             filtersChanged = true;
         }
     } else if (field === 'bedrooms') {
@@ -271,13 +399,14 @@ function processSidebarAnswer(field, value, savedData) {
             const bedrooms = parseInt(bedroomMatch[1]);
             filters.quartos = bedrooms;
             savedData.bedrooms = bedrooms;
+            leadUpdates.bedrooms = bedrooms;
             filtersChanged = true;
         }
     } else if (field === 'features') {
         // Extract features and add to filters
         const features = [];
         if (lowerValue.includes('pet') || lowerValue.includes('animal') || lowerValue.includes('cachorro') || lowerValue.includes('gato')) {
-            features.push('pet');
+            features.push('pet friendly');
         }
         if (lowerValue.includes('piscina')) {
             features.push('piscina');
@@ -300,8 +429,91 @@ function processSidebarAnswer(field, value, savedData) {
         
         if (features.length > 0) {
             filters.features = features.join(',');
+            // Adiciona features ao leadData (merge com existentes)
+            const currentLead = getOrCreateLeadData();
+            const existingFeatures = currentLead.mustHaveFeatures || [];
+            leadUpdates.mustHaveFeatures = [...new Set([...existingFeatures, ...features])];
             filtersChanged = true;
         }
+    } else if (field === 'timeline') {
+        // Extract timeline information
+        let timelineWhen = null;
+        let urgency = 'medium';
+        
+        if (lowerValue.includes('urgente') || lowerValue.includes('logo') || lowerValue.includes('já') || lowerValue.includes('imediato') || lowerValue.includes('rápido')) {
+            timelineWhen = 'immediate';
+            urgency = 'high';
+        } else if (lowerValue.includes('próximo mês') || lowerValue.includes('mês que vem') || lowerValue.includes('breve')) {
+            timelineWhen = '1-3months';
+            urgency = 'high';
+        } else if (lowerValue.match(/\d+\s*(?:a|-)\s*\d+\s*(?:mês|meses)/)) {
+            timelineWhen = '3-6months';
+            urgency = 'medium';
+        } else if (lowerValue.match(/\d+\s*(?:a|-)\s*\d+\s*(?:mês|meses)/) && lowerValue.includes('6')) {
+            timelineWhen = '6-12months';
+            urgency = 'medium';
+        } else if (lowerValue.includes('explorando') || lowerValue.includes('sem pressa') || lowerValue.includes('quando der')) {
+            timelineWhen = 'exploring';
+            urgency = 'low';
+        } else if (lowerValue.match(/\d+\s*(mês|meses|ano)/)) {
+            const timeMatch = value.match(/(\d+)\s*(mês|meses|ano)/i);
+            if (timeMatch) {
+                const num = parseInt(timeMatch[1]);
+                if (num <= 3) timelineWhen = '1-3months';
+                else if (num <= 6) timelineWhen = '3-6months';
+                else timelineWhen = '6-12months';
+            }
+        }
+        
+        if (timelineWhen) {
+            leadUpdates.timeline = {
+                when: timelineWhen,
+                urgency: urgency,
+                reason: value // Salva a resposta original para contexto
+            };
+        }
+    } else if (field === 'payment') {
+        // Extract payment method
+        let paymentMethod = null;
+        
+        if (lowerValue.includes('financiamento') || lowerValue.includes('financiar')) {
+            paymentMethod = 'financing';
+        } else if (lowerValue.includes('vista') || lowerValue.includes('dinheiro') || lowerValue.includes('pronto') || lowerValue.includes('à vista')) {
+            paymentMethod = 'cash';
+        } else if (lowerValue.includes('ambos') || lowerValue.includes('qualquer') || lowerValue.includes('depende')) {
+            paymentMethod = 'both';
+        }
+        
+        if (paymentMethod) {
+            leadUpdates.purchaseCondition = {
+                method: paymentMethod
+            };
+        }
+    } else if (field === 'current_situation') {
+        // Extract current living situation
+        let living = null;
+        
+        if (lowerValue.includes('alugando') || lowerValue.includes('aluguel') || lowerValue.includes('alugo')) {
+            living = 'renting';
+        } else if (lowerValue.includes('tenho') || lowerValue.includes('próprio') || lowerValue.includes('já tenho') || lowerValue.includes('minha casa')) {
+            living = 'owning';
+        } else if (lowerValue.includes('família') || lowerValue.includes('pais') || lowerValue.includes('morando com')) {
+            living = 'with_family';
+        } else if (lowerValue.includes('outro') || lowerValue.includes('diferente')) {
+            living = 'other';
+        }
+        
+        if (living) {
+            leadUpdates.currentSituation = {
+                living: living,
+                whyMoving: value // Salva contexto adicional
+            };
+        }
+    }
+    
+    // Salva informações no leadData (mantém contexto)
+    if (Object.keys(leadUpdates).length > 0) {
+        updateLeadDataAndSave(leadUpdates);
     }
     
     // Acknowledge answer using user's words
