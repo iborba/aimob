@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TRIAGE — Nem todo lead merece um corretor agora</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Arial,sans-serif;
+  background:#f8f9fa;
+  color:#2c3e50;
+  line-height:1.6
+}
+.container{max-width:1200px;margin:auto;padding:0 20px}
+section{padding:90px 0;background:#fff}
+section.alt{background:#f1f3f6}
+
+h1,h2,h3{text-align:center}
+h1{font-size:4rem}
+h2{
+  font-size:2.6rem;
+  margin-bottom:15px;
+  color:#2c3e50;
+  font-weight:700;
+  position:relative;
+  padding-bottom:20px
+}
+h2::after{
+  content:'';
+  position:absolute;
+  bottom:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:60px;
+  height:4px;
+  background:linear-gradient(90deg,#667eea,#764ba2);
+  border-radius:2px
+}
+.sub{max-width:780px;margin:0 auto 50px;color:#7f8c8d;text-align:center;font-size:1.1rem}
+
+header{
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 50%,#f093fb 100%);
+  color:#fff;
+  padding:120px 20px;
+  text-align:center;
+  position:relative;
+  overflow:hidden
+}
+header::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:radial-gradient(circle at 20% 50%,rgba(255,255,255,.1) 0%,transparent 50%),
+             radial-gradient(circle at 80% 80%,rgba(255,255,255,.1) 0%,transparent 50%);
+  pointer-events:none
+}
+header small{
+  font-size:1.2rem;
+  opacity:.95;
+  display:inline-block;
+  background:rgba(255,255,255,.15);
+  padding:8px 20px;
+  border-radius:20px;
+  margin-bottom:20px;
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.2)
+}
+header h1{
+  font-size:4.5rem;
+  font-weight:800;
+  letter-spacing:-2px;
+  margin:20px 0;
+  text-shadow:0 4px 20px rgba(0,0,0,.2);
+  position:relative;
+  z-index:1
+}
+header p{
+  font-size:1.6rem;
+  font-weight:300;
+  margin-top:15px;
+  opacity:.95;
+  position:relative;
+  z-index:1
+}
+
+.flow{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:25px;
+  margin-top:50px
+}
+.flow .box{
+  background:linear-gradient(135deg,#fff 0%,#f8f9fa 100%);
+  padding:25px 30px;
+  border-radius:14px;
+  box-shadow:0 6px 20px rgba(0,0,0,.12);
+  min-width:180px;
+  text-align:center;
+  font-weight:600;
+  border:2px solid transparent;
+  transition:all .3s ease
+}
+.flow .box:first-child{
+  border-color:#4caf50;
+  background:linear-gradient(135deg,#e8f5e9 0%,#fff 100%)
+}
+.flow .box:nth-child(3){
+  border-color:#ff9800;
+  background:linear-gradient(135deg,#fff3e0 0%,#fff 100%)
+}
+.flow .box:nth-child(5){
+  border-color:#f44336;
+  background:linear-gradient(135deg,#ffebee 0%,#fff 100%)
+}
+.flow .box:last-child{
+  border-color:#9c27b0;
+  background:linear-gradient(135deg,#f3e5f5 0%,#fff 100%)
+}
+.flow .arrow{font-size:2rem;align-self:center;color:#999}
+
+.highlight{
+  background:linear-gradient(135deg,#fff3cd 0%,#ffe082 100%);
+  border-left:6px solid #ff9800;
+  padding:30px;
+  border-radius:12px;
+  max-width:850px;
+  margin:60px auto 0;
+  font-size:1.15rem;
+  text-align:center;
+  box-shadow:0 4px 15px rgba(255,152,0,.2);
+  font-weight:500
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:30px;
+  margin-top:60px
+}
+.card{
+  background:#fff;
+  padding:40px;
+  border-radius:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.12);
+  border-top:4px solid;
+  transition:all .3s ease
+}
+.card:first-child{
+  border-top-color:#25d366;
+  background:linear-gradient(135deg,#fff 0%,#e8f5e9 100%)
+}
+.card:last-child{
+  border-top-color:#2196f3;
+  background:linear-gradient(135deg,#fff 0%,#e3f2fd 100%)
+}
+.card h3{
+  text-align:left;
+  margin-bottom:15px;
+  color:#2c3e50;
+  font-size:1.4rem
+}
+.card p{
+  color:#5a6c7d;
+  line-height:1.7
+}
+.card strong{
+  color:#667eea;
+  font-weight:600
+}
+
+.dashboard{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:25px;
+  margin-top:50px
+}
+.metric{
+  background:linear-gradient(135deg,#fff 0%,#f8f9fa 100%);
+  padding:35px;
+  border-radius:16px;
+  box-shadow:0 6px 20px rgba(0,0,0,.12);
+  text-align:center;
+  border-top:4px solid #667eea;
+  transition:all .3s ease
+}
+.metric:nth-child(1){
+  border-top-color:#4caf50;
+  background:linear-gradient(135deg,#e8f5e9 0%,#fff 100%)
+}
+.metric:nth-child(2){
+  border-top-color:#ff9800;
+  background:linear-gradient(135deg,#fff3e0 0%,#fff 100%)
+}
+.metric:nth-child(3){
+  border-top-color:#f44336;
+  background:linear-gradient(135deg,#ffebee 0%,#fff 100%)
+}
+.metric:nth-child(4){
+  border-top-color:#9c27b0;
+  background:linear-gradient(135deg,#f3e5f5 0%,#fff 100%)
+}
+.metric strong{
+  font-size:3rem;
+  display:block;
+  color:#667eea;
+  font-weight:700;
+  margin-bottom:10px
+}
+.metric:nth-child(1) strong{color:#4caf50}
+.metric:nth-child(2) strong{color:#ff9800}
+.metric:nth-child(3) strong{color:#f44336}
+.metric:nth-child(4) strong{color:#9c27b0}
+
+.chat{
+  background:linear-gradient(135deg,#ece5dd 0%,#e0d5c7 100%);
+  padding:25px;
+  border-radius:16px;
+  max-width:420px;
+  margin:40px auto;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);
+  border:2px solid rgba(37,211,102,.2)
+}
+.msg{
+  background:#fff;
+  padding:14px 16px;
+  border-radius:12px;
+  margin-bottom:12px;
+  font-size:.95rem;
+  box-shadow:0 2px 4px rgba(0,0,0,.1);
+  color:#2c3e50
+}
+.msg.user{
+  background:linear-gradient(135deg,#dcf8c6 0%,#c8e6a9 100%);
+  margin-left:40px;
+  border:1px solid rgba(37,211,102,.3)
+}
+
+.site-mock{
+  background:#fff;
+  border-radius:16px;
+  box-shadow:0 8px 24px rgba(0,0,0,.15);
+  overflow:hidden;
+  margin-top:50px;
+  border:1px solid #e0e0e0
+}
+.site-header{
+  background:linear-gradient(135deg,#2c3e50 0%,#1a252f 100%);
+  color:#fff;
+  padding:20px 30px;
+  font-weight:600;
+  display:flex;
+  justify-content:space-between;
+  align-items:center
+}
+.site-nav{display:flex;gap:25px}
+.site-nav a{color:#fff;text-decoration:none;font-size:.95rem;opacity:.9}
+.site-nav a:hover{opacity:1}
+.site-filters{
+  background:#f8f9fa;
+  padding:20px 30px;
+  border-bottom:2px solid #e0e0e0;
+  display:flex;
+  gap:15px;
+  flex-wrap:wrap
+}
+.filter-item{
+  background:#fff;
+  padding:10px 18px;
+  border:2px solid #e0e0e0;
+  border-radius:8px;
+  font-size:.9rem;
+  color:#495057;
+  font-weight:500
+}
+.site-content{padding:40px 30px}
+.properties{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:25px;
+  margin-bottom:40px
+}
+.property{
+  border:2px solid #e0e0e0;
+  border-radius:12px;
+  overflow:hidden;
+  background:#fff;
+  transition:all .3s ease
+}
+.property-image{
+  height:140px;
+  background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:.85rem;
+  font-weight:500
+}
+.property-info{
+  padding:18px;
+  border-top:1px solid #f0f0f0
+}
+.property-info h4{
+  font-size:1.1rem;
+  margin-bottom:8px;
+  color:#2c3e50;
+  font-weight:600
+}
+.property-info p{
+  font-size:.9rem;
+  color:#6c757d;
+  margin:0
+}
+.property:hover{
+  border-color:#2196f3;
+  box-shadow:0 6px 20px rgba(33,150,243,.2);
+  transform:translateY(-3px)
+}
+.frustration-iframe{
+  margin-top:40px;
+  border:2px solid #e0e0e0;
+  border-radius:12px;
+  overflow:hidden;
+  background:#f8f9fa
+}
+.frustration-header{
+  background:linear-gradient(135deg,#e3f2fd 0%,#bbdefb 100%);
+  padding:20px;
+  text-align:center;
+  border-bottom:2px solid #90caf9
+}
+.frustration-header h4{
+  color:#1565c0;
+  font-size:1.2rem;
+  margin:0;
+  font-weight:600
+}
+.frustration-header p{
+  color:#1976d2;
+  font-size:.9rem;
+  margin:8px 0 0;
+  opacity:.9
+}
+.frustration-form{
+  background:#fff;
+  padding:30px;
+  border-radius:0 0 10px 10px
+}
+.form-field{
+  margin-bottom:20px
+}
+.form-field label{
+  display:block;
+  font-size:.95rem;
+  color:#495057;
+  font-weight:600;
+  margin-bottom:8px
+}
+.form-field input,
+.form-field select{
+  width:100%;
+  padding:12px 15px;
+  border:2px solid #e0e0e0;
+  border-radius:8px;
+  font-size:.95rem;
+  color:#2c3e50;
+  background:#fff
+}
+.form-field input:focus,
+.form-field select:focus{
+  outline:none;
+  border-color:#2196f3;
+  box-shadow:0 0 0 3px rgba(33,150,243,.1)
+}
+.form-submit{
+  background:linear-gradient(135deg,#2196f3 0%,#1976d2 100%);
+  color:#fff;
+  border:none;
+  padding:14px 30px;
+  border-radius:8px;
+  font-size:1rem;
+  font-weight:600;
+  cursor:pointer;
+  width:100%;
+  margin-top:10px;
+  box-shadow:0 4px 12px rgba(33,150,243,.3)
+}
+.frustration-conclusion{
+  background:linear-gradient(135deg,#fff3e0 0%,#ffe0b2 100%);
+  border-left:6px solid #ff9800;
+  padding:35px;
+  border-radius:16px;
+  margin-top:50px;
+  box-shadow:0 6px 20px rgba(255,152,0,.2)
+}
+.frustration-conclusion h3{
+  font-size:1.6rem;
+  color:#e65100;
+  margin-bottom:25px;
+  text-align:left
+}
+.frustration-conclusion ul{
+  list-style:none;
+  padding:0;
+  margin:0 0 25px
+}
+.frustration-conclusion li{
+  padding:12px 0;
+  border-bottom:1px solid rgba(230,81,0,.2);
+  color:#bf360c;
+  font-size:1.05rem;
+  font-weight:500
+}
+.frustration-conclusion li:last-child{
+  border-bottom:none
+}
+.frustration-conclusion li::before{
+  content:"✓ ";
+  color:#ff9800;
+  font-weight:700;
+  margin-right:12px;
+  font-size:1.2rem
+}
+.frustration-conclusion .highlight-final{
+  background:rgba(255,255,255,.7);
+  padding:20px;
+  border-radius:10px;
+  margin-top:25px;
+  text-align:center;
+  font-size:1.3rem;
+  font-weight:700;
+  color:#e65100
+}
+
+footer{
+  background:linear-gradient(135deg,#2c3e50 0%,#1a252f 100%);
+  color:#fff;
+  padding:80px 20px;
+  text-align:center;
+  font-size:1.6rem;
+  font-weight:300;
+  position:relative;
+  overflow:hidden
+}
+footer::before{
+  content:'';
+  position:absolute;
+  top:0;
+  left:0;
+  right:0;
+  height:1px;
+  background:linear-gradient(90deg,transparent,#667eea,transparent)
+}
+
+@media(max-width:768px){
+  header{padding:80px 20px}
+  header h1{font-size:2.8rem;letter-spacing:-1px}
+  header p{font-size:1.3rem}
+  h2{font-size:2rem}
+  h2::after{width:40px;height:3px}
+  .flow .box{min-width:140px;padding:20px}
+  .metric strong{font-size:2.2rem}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <small>Seu corretor está falando com curiosos</small>
+  <h1>TRIAGE</h1>
+  <p>Nem todo lead merece um corretor agora</p>
+</header>
+
+<section>
+<div class="container">
+<h2>O problema real</h2>
+<p class="sub">
+Leads chegam sem contexto.  
+Corretores perdem tempo.  
+Gestores não sabem onde o dinheiro está sendo desperdiçado.
+</p>
+
+<div class="flow">
+<div class="box">Lead</div>
+<div class="arrow">→</div>
+<div class="box">Site / WhatsApp</div>
+<div class="arrow">→</div>
+<div class="box">Corretor</div>
+<div class="arrow">→</div>
+<div class="box">Ruído</div>
+</div>
+
+<div class="highlight">
+Cada lead frio custa tempo.  
+Tempo custa dinheiro.  
+E quase ninguém mede isso.
+</div>
+</div>
+</section>
+
+<section class="alt">
+<div class="container">
+<h2>TRIAGE é uma camada de decisão</h2>
+<p class="sub">
+Não é chatbot. Não é CRM.  
+É triagem antes do atendimento humano.
+</p>
+
+<div class="cards">
+<div class="card">
+<h3>Pré-atendimento no WhatsApp</h3>
+<p>
+Enquanto corretores estão ocupados, o TRIAGE conversa,
+faz perguntas estratégicas e classifica a intenção.
+</p>
+<p><strong>O corretor não faz triagem. Ele fecha negócio.</strong></p>
+</div>
+
+<div class="card">
+<h3>Diagnóstico de frustração no site</h3>
+<p>
+Quando alguém não encontra o que procura,
+o TRIAGE captura o motivo e transforma frustração em dado.
+</p>
+<p><strong>Esses leads normalmente vão embora.</strong></p>
+</div>
+</div>
+</div>
+</section>
+
+<section style="background:linear-gradient(135deg,#f8f9fa 0%,#e9ecef 100%);padding:100px 0">
+<div class="container">
+<h2 style="font-size:2.8rem;margin-bottom:20px">O que o gestor passa a enxergar</h2>
+<p class="sub" style="font-size:1.2rem;font-weight:500;color:#495057">Insights acionáveis. Não métricas de vaidade.</p>
+
+<style>
+.insight-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:30px;margin:60px 0}
+.insight-card{background:#fff;padding:40px;border-radius:16px;box-shadow:0 8px 24px rgba(0,0,0,.12);border-top:5px solid;position:relative}
+.insight-card.primary{border-top-color:#667eea;background:linear-gradient(135deg,#fff 0%,#f0f4ff 100%)}
+.insight-card.warning{border-top-color:#ff9800;background:linear-gradient(135deg,#fff 0%,#fff8f0 100%)}
+.insight-card.danger{border-top-color:#f44336;background:linear-gradient(135deg,#fff 0%,#fff5f5 100%)}
+.insight-number{font-size:4rem;font-weight:800;line-height:1;margin-bottom:15px;color:#2c3e50}
+.insight-card.primary .insight-number{color:#667eea}
+.insight-card.warning .insight-number{color:#ff9800}
+.insight-card.danger .insight-number{color:#f44336}
+.insight-label{font-size:1.1rem;color:#495057;font-weight:600;margin-bottom:10px}
+.insight-desc{font-size:.95rem;color:#6c757d;line-height:1.6}
+
+.quality-bar{background:#fff;padding:40px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.1);margin:50px 0}
+.quality-bar h3{text-align:left;font-size:1.5rem;margin-bottom:30px;color:#2c3e50}
+.bar-container{background:#e9ecef;height:50px;border-radius:25px;overflow:hidden;position:relative;margin-bottom:20px;box-shadow:inset 0 2px 8px rgba(0,0,0,.1)}
+.bar-segment{height:100%;display:inline-block;float:left;position:relative;transition:all .3s}
+.bar-segment.hot{background:linear-gradient(90deg,#f44336,#e53935);width:31%}
+.bar-segment.warm{background:linear-gradient(90deg,#ff9800,#f57c00);width:40%}
+.bar-segment.cold{background:linear-gradient(90deg,#2196f3,#1976d2);width:29%}
+.bar-label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:#fff;font-weight:700;font-size:.9rem;text-shadow:0 1px 3px rgba(0,0,0,.3);white-space:nowrap}
+.bar-legend{display:flex;justify-content:space-between;margin-top:15px;font-size:.9rem;color:#6c757d}
+.bar-legend-item{display:flex;align-items:center;gap:8px}
+.bar-dot{width:12px;height:12px;border-radius:50%}
+.bar-dot.hot{background:#f44336}
+.bar-dot.warm{background:#ff9800}
+.bar-dot.cold{background:#2196f3}
+
+.frustration-list{background:#fff;padding:40px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.1);margin:50px 0}
+.frustration-list h3{text-align:left;font-size:1.5rem;margin-bottom:30px;color:#2c3e50}
+.frustration-item{display:flex;justify-content:space-between;align-items:center;padding:20px;border-bottom:2px solid #f0f0f0;transition:all .3s}
+.frustration-item:last-child{border-bottom:none}
+.frustration-item:hover{background:#f8f9fa;border-radius:8px}
+.frustration-text{flex:1;font-size:1rem;color:#2c3e50;font-weight:500}
+.frustration-count{background:linear-gradient(135deg,#2196f3,#1976d2);color:#fff;padding:8px 16px;border-radius:20px;font-weight:700;font-size:.9rem;min-width:60px;text-align:center}
+.frustration-rank{display:inline-block;width:28px;height:28px;background:#667eea;color:#fff;border-radius:50%;text-align:center;line-height:28px;font-weight:700;font-size:.85rem;margin-right:15px}
+
+.marketing-compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:25px;margin:50px 0}
+.marketing-card{background:#fff;padding:30px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.1);border-left:5px solid}
+.marketing-card.google{border-left-color:#4285f4}
+.marketing-card.instagram{border-left-color:#e4405f}
+.marketing-card.whatsapp{border-left-color:#25d366}
+.marketing-name{font-size:1.2rem;font-weight:700;margin-bottom:20px;color:#2c3e50}
+.marketing-stats{display:flex;justify-content:space-between;margin-bottom:15px;padding:12px;background:#f8f9fa;border-radius:8px}
+.marketing-label{font-size:.9rem;color:#6c757d}
+.marketing-value{font-weight:700;color:#2c3e50}
+.marketing-contrast{font-size:.85rem;color:#6c757d;font-style:italic;margin-top:10px}
+
+.operational-box{background:linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 100%);border-left:6px solid #4caf50;padding:35px;border-radius:16px;margin:50px 0;box-shadow:0 6px 20px rgba(76,175,80,.2)}
+.operational-box h3{font-size:1.4rem;color:#2e7d32;margin-bottom:15px}
+.operational-box p{color:#1b5e20;font-size:1.05rem;line-height:1.7;margin-bottom:15px}
+.operational-highlight{background:rgba(255,255,255,.6);padding:15px;border-radius:8px;margin-top:20px;font-weight:600;color:#1b5e20}
+
+.frustration-insight{background:#fff;padding:40px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.1);margin:50px 0}
+.frustration-insight h3{text-align:center;font-size:1.8rem;margin-bottom:30px;color:#2c3e50}
+.frustration-explanation{background:linear-gradient(135deg,#fff3e0 0%,#ffe0b2 100%);border-left:6px solid #ff9800;padding:30px;border-radius:12px;margin-bottom:40px;box-shadow:0 4px 15px rgba(255,152,0,.2)}
+.frustration-explanation p{font-size:1.15rem;color:#e65100;line-height:1.7;margin:0;font-weight:500}
+.frustration-comparison{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:30px;margin-top:40px}
+.frustration-compare-card{background:#fff;padding:35px;border-radius:16px;box-shadow:0 6px 20px rgba(0,0,0,.1);border-top:5px solid}
+.frustration-compare-card.abandon{border-top-color:#9e9e9e;background:linear-gradient(135deg,#f5f5f5 0%,#fff 100%)}
+.frustration-compare-card.form{border-top-color:#f44336;background:linear-gradient(135deg,#ffebee 0%,#fff 100%)}
+.frustration-compare-card h4{font-size:1.3rem;margin-bottom:20px;color:#2c3e50}
+.frustration-compare-card .score-display{font-size:3.5rem;font-weight:800;margin:20px 0;line-height:1}
+.frustration-compare-card.abandon .score-display{color:#757575}
+.frustration-compare-card.form .score-display{color:#f44336}
+.frustration-compare-card .score-label{font-size:.9rem;color:#6c757d;margin-bottom:15px}
+.frustration-compare-card .behavior-list{list-style:none;padding:0;margin-top:20px}
+.frustration-compare-card .behavior-list li{padding:10px 0;border-bottom:1px solid #f0f0f0;color:#495057;font-size:.95rem}
+.frustration-compare-card .behavior-list li:last-child{border-bottom:none}
+.frustration-compare-card .behavior-list li::before{content:"• ";color:#667eea;font-weight:700;margin-right:8px}
+.frustration-action{background:linear-gradient(135deg,#e8f5e9 0%,#c8e6c9 100%);border-left:6px solid #4caf50;padding:25px;border-radius:12px;margin-top:40px;text-align:center;box-shadow:0 4px 15px rgba(76,175,80,.2)}
+.frustration-action p{font-size:1.2rem;color:#1b5e20;font-weight:600;margin:0}
+</style>
+
+<div class="insight-grid">
+<div class="insight-card primary">
+<div class="insight-number">69%</div>
+<div class="insight-label">Leads que não deveriam ir para o corretor</div>
+<div class="insight-desc">São filtrados antes, economizando tempo do time.</div>
+</div>
+
+<div class="insight-card warning">
+<div class="insight-number">127</div>
+<div class="insight-label">Demandas que o site não atende</div>
+<div class="insight-desc">Oportunidades perdidas por falta de imóveis compatíveis.</div>
+</div>
+
+<div class="insight-card danger">
+<div class="insight-number">45%</div>
+<div class="insight-label">Anúncios gerando frustração</div>
+<div class="insight-desc">Google Ads traz visitantes que não encontram o que procuram.</div>
+</div>
+</div>
+
+<div class="quality-bar">
+<h3>Distribuição de Qualidade dos Leads</h3>
+<div class="bar-container">
+<div class="bar-segment hot"><span class="bar-label">31% HOT</span></div>
+<div class="bar-segment warm"><span class="bar-label">40% WARM</span></div>
+<div class="bar-segment cold"><span class="bar-label">29% COLD</span></div>
+</div>
+<div class="bar-legend">
+<div class="bar-legend-item"><span class="bar-dot hot"></span> Alta intenção</div>
+<div class="bar-legend-item"><span class="bar-dot warm"></span> Intenção moderada</div>
+<div class="bar-legend-item"><span class="bar-dot cold"></span> Baixa intenção</div>
+</div>
+<p style="margin-top:20px;color:#6c757d;font-size:.95rem;text-align:center">
+<strong>TRIAGE organiza prioridade antes do contato humano.</strong>
+</p>
+</div>
+
+<div class="frustration-list">
+<h3>Top demandas que os usuários não encontraram no site</h3>
+<div class="frustration-item">
+<span><span class="frustration-rank">1</span><span class="frustration-text">Casa com 3 quartos na Zona Sul até R$ 400k</span></span>
+<span class="frustration-count">47x</span>
+</div>
+<div class="frustration-item">
+<span><span class="frustration-rank">2</span><span class="frustration-text">Apartamento com garagem e área próximo ao metrô</span></span>
+<span class="frustration-count">32x</span>
+</div>
+<div class="frustration-item">
+<span><span class="frustration-rank">3</span><span class="frustration-text">Casa com piscina e churrasqueira até R$ 500k</span></span>
+<span class="frustration-count">28x</span>
+</div>
+<div class="frustration-item">
+<span><span class="frustration-rank">4</span><span class="frustration-text">Apartamento 2 quartos financiamento até R$ 300k</span></span>
+<span class="frustration-count">20x</span>
+</div>
+</div>
+
+<div>
+<h3 style="text-align:center;font-size:1.8rem;margin-bottom:40px;color:#2c3e50">Qualidade por Fonte de Marketing</h3>
+<div class="marketing-compare">
+<div class="marketing-card google">
+<div class="marketing-name">Google Ads</div>
+<div class="marketing-stats">
+<span class="marketing-label">Volume:</span>
+<span class="marketing-value">450 leads</span>
+</div>
+<div class="marketing-stats">
+<span class="marketing-label">Intent média:</span>
+<span class="marketing-value">42/100</span>
+</div>
+<div class="marketing-contrast">Alto volume, baixa qualidade</div>
+</div>
+
+<div class="marketing-card instagram">
+<div class="marketing-name">Instagram</div>
+<div class="marketing-stats">
+<span class="marketing-label">Volume:</span>
+<span class="marketing-value">280 leads</span>
+</div>
+<div class="marketing-stats">
+<span class="marketing-label">Intent média:</span>
+<span class="marketing-value">58/100</span>
+</div>
+<div class="marketing-contrast">Volume moderado, melhor qualidade</div>
+</div>
+
+<div class="marketing-card whatsapp">
+<div class="marketing-name">WhatsApp</div>
+<div class="marketing-stats">
+<span class="marketing-label">Volume:</span>
+<span class="marketing-value">320 leads</span>
+</div>
+<div class="marketing-stats">
+<span class="marketing-label">Intent média:</span>
+<span class="marketing-value">71/100</span>
+</div>
+<div class="marketing-contrast">Melhor relação volume/qualidade</div>
+</div>
+</div>
+</div>
+
+<div class="operational-box">
+<h3>Capacidade do Time vs Volume Recebido</h3>
+<p>
+Seus 12 corretores podem atender eficientemente cerca de 240 leads por mês 
+(20 leads/corretor). Sem TRIAGE, você recebe 1.050 leads, dos quais apenas 31% 
+são realmente quentes.
+</p>
+<p>
+<strong>Com TRIAGE:</strong> Corretores recebem apenas os 325 leads HOT/WARM, 
+focando em quem realmente quer comprar. Os 725 leads frios são nutridos 
+automaticamente sem consumir tempo do time.
+</p>
+<div class="operational-highlight">
+TRIAGE protege seu time, garantindo que cada minuto seja investido em leads com real intenção de compra.
+</div>
+</div>
+
+<div class="frustration-insight">
+<h3>Leads de frustração são leads quentes escondidos</h3>
+
+<div class="frustration-explanation">
+<p>
+Somente quem realmente quer comprar se dá ao trabalho
+de explicar o que não encontrou no site.
+</p>
+</div>
+
+<div class="frustration-comparison">
+<div class="frustration-compare-card abandon">
+<h4>Leads que abandonam silenciosamente</h4>
+<div class="score-display">28</div>
+<div class="score-label">Score médio de intenção</div>
+<ul class="behavior-list">
+<li>Navega pelo site</li>
+<li>Não encontra o que procura</li>
+<li>Fecha a aba e vai embora</li>
+<li>Nunca mais retorna</li>
+</ul>
+</div>
+
+<div class="frustration-compare-card form">
+<h4>Leads que preenchem formulário de frustração</h4>
+<div class="score-display">94</div>
+<div class="score-label">Score médio de intenção</div>
+<ul class="behavior-list">
+<li>Navega pelo site</li>
+<li>Não encontra o que procura</li>
+<li>Investe tempo explicando o problema</li>
+<li>Demonstra intenção real de compra</li>
+</ul>
+</div>
+</div>
+
+<div class="frustration-action">
+<p>Esses leads devem ir direto para o corretor.</p>
+</div>
+</div>
+</div>
+</section>
+
+<section class="alt">
+<div class="container">
+<h2>Exemplo real — WhatsApp</h2>
+<p class="sub">
+Pré-atendimento enquanto corretores estão ocupados.
+</p>
+
+<div class="chat">
+<div class="msg">Olá 👋 Posso te fazer algumas perguntas rápidas?</div>
+<div class="msg user">Claro</div>
+<div class="msg">Você está comprando ou só pesquisando?</div>
+<div class="msg user">Comprar</div>
+<div class="msg">Para quando?</div>
+<div class="msg user">Até 3 meses</div>
+<div class="msg">Perfeito. Vou te conectar com um corretor.</div>
+</div>
+</div>
+</section>
+
+<section>
+<div class="container">
+<h2>Exemplo real — No site</h2>
+<p class="sub">
+Aparece apenas quando o visitante não encontra o que procura.
+</p>
+
+<div class="site-mock">
+<div class="site-header">
+<div style="font-size:1.2rem">Imobiliária Exemplo</div>
+<div class="site-nav">
+<a href="#">Início</a>
+<a href="#">Imóveis</a>
+<a href="#">Sobre</a>
+<a href="#">Contato</a>
+</div>
+</div>
+
+<div class="site-filters">
+<div class="filter-item">📍 Região: Zona Sul</div>
+<div class="filter-item">💰 Até R$ 400.000</div>
+<div class="filter-item">🏠 Casa</div>
+<div class="filter-item">🛏️ 3 quartos</div>
+</div>
+
+<div class="site-content">
+<h3 style="font-size:1.4rem;margin-bottom:25px;color:#2c3e50;text-align:left">
+Imóveis Disponíveis
+</h3>
+
+<div class="properties">
+<div class="property">
+<div class="property-image">Apartamento 2 quartos</div>
+<div class="property-info">
+<h4>R$ 350.000</h4>
+<p>São Paulo - Zona Norte</p>
+</div>
+</div>
+<div class="property">
+<div class="property-image">Apartamento 2 quartos</div>
+<div class="property-info">
+<h4>R$ 420.000</h4>
+<p>São Paulo - Zona Leste</p>
+</div>
+</div>
+<div class="property">
+<div class="property-image">Casa 4 quartos</div>
+<div class="property-info">
+<h4>R$ 680.000</h4>
+<p>São Paulo - Zona Oeste</p>
+</div>
+</div>
+</div>
+
+<div class="frustration-iframe">
+<div class="frustration-header">
+<h4>Não encontrou o que procurava?</h4>
+<p>Conte pra gente em 30 segundos.</p>
+</div>
+<div class="frustration-form">
+<div class="form-field">
+<label>O que você estava procurando?</label>
+<input type="text" value="Casa com 3 quartos na Zona Sul" readonly style="background:#f8f9fa">
+</div>
+<div class="form-field">
+<label>Compra ou aluguel?</label>
+<select style="background:#f8f9fa">
+<option>Compra</option>
+</select>
+</div>
+<div class="form-field">
+<label>Faixa de preço desejada?</label>
+<input type="text" value="Até R$ 400.000" readonly style="background:#f8f9fa">
+</div>
+<div class="form-field">
+<label>Região de interesse?</label>
+<input type="text" value="Zona Sul de São Paulo" readonly style="background:#f8f9fa">
+</div>
+<button class="form-submit" type="button">Enviar</button>
+</div>
+</div>
+</div>
+</div>
+
+<div class="frustration-conclusion">
+<h3>Por que esse lead é muito quente?</h3>
+<ul>
+<li>Já tentou navegar pelo site</li>
+<li>Já tentou usar os filtros</li>
+<li>Investiu tempo explicando o problema</li>
+<li>Demonstrou intenção real de compra</li>
+</ul>
+<div class="highlight-final">
+Quem reclama quer comprar.
+</div>
+</div>
+</div>
+</section>
+
+<footer>
+Menos ruído. Mais decisão.
+</footer>
+
+</body>
+</html>
